@@ -120,7 +120,7 @@ class EUAPI {
 
 		$handler = apply_filters( "euapi_{$type}_handler", false, $item );
 
-		if ( is_a( $handler, 'EUAPI_Handler_Base' ) )
+		if ( is_a( $handler, 'EUAPI_Handler' ) )
 			$this->handlers[$type][$file] = $handler;
 
 		return $handler;
@@ -129,18 +129,18 @@ class EUAPI {
 
 	function populate_item( $type, $file ) {
 
-		$func = "get_{$type}_data";
-		$data = $this->$func( $file );
+		switch ( $type ) {
 
-		if ( $data ) {
-			switch ( $type ) {
-				case 'plugin':
+			case 'plugin':
+				if ( $data = $this->get_plugin_data( $file ) )
 					return new EUAPI_Item_Plugin( $file, $data );
-					break;
-				case 'theme':
+				break;
+
+			case 'theme':
+				if ( $data = $this->get_theme_data( $file ) )
 					return new EUAPI_Item_Theme( $file, $data );
-					break;
-			}
+				break;
+
 		}
 
 		return false;
@@ -157,7 +157,10 @@ class EUAPI {
 
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 
-		return get_plugin_data( WP_PLUGIN_DIR . '/' . $file );
+		if ( file_exists( $plugin =  WP_PLUGIN_DIR . '/' . $file ) )
+			return get_plugin_data( $plugin );
+
+		return false;
 
 	}
 
@@ -256,6 +259,9 @@ class EUAPI {
 		$proper_destination = WP_PLUGIN_DIR . '/' . $handler->config['folder_name'];
 		$move = $wp_filesystem->move( $result['destination'], $proper_destination );
 		$result['destination'] = $proper_destination;
+
+		if ( !$move )
+			echo __( 'The plugin has been updated but could not be moved to its correct location.', 'euapi' );
 
 		return $result;
 

@@ -4,9 +4,9 @@
 if ( !defined('ABSPATH') )
 	die('-1');
 
-if ( ! class_exists( 'EUAPI_Handler_Base' ) ) :
+if ( ! class_exists( 'EUAPI_Handler' ) ) :
 
-class EUAPI_Handler_Base {
+class EUAPI_Handler {
 
 	/**
 	 * Temporary store the data fetched from remote repo, so it only gets loaded once per class instance

@@ -6,7 +6,7 @@ if ( !defined('ABSPATH') )
 
 if ( ! class_exists( 'EUAPI_Handler_Github' ) ) :
 
-class EUAPI_Handler_Github extends EUAPI_Handler_Base {
+class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	/**
 	 * Class Constructor
