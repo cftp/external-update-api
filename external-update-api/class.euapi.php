@@ -20,7 +20,9 @@ class EUAPI {
 		add_filter( 'http_request_timeout',                  array( $this, 'http_request_timeout' ) );
 
 		add_filter( 'plugins_api',                           array( $this, 'get_plugin_info' ), 10, 3 );
+		add_filter( 'themes_api',                            array( $this, 'get_theme_info' ), 10, 3 );
 
+		add_filter( 'upgrader_pre_install',                  array( $this, 'upgrader_pre_install' ), 10, 2 );
 		add_filter( 'upgrader_post_install',                 array( $this, 'upgrader_post_install' ), 10, 3 );
 
 	}
@@ -62,13 +64,20 @@ class EUAPI {
 
 		$themes = unserialize( $args['body']['themes'] );
 
-		foreach ( $themes->themes as $theme => $data ) {
+		foreach ( $themes as $theme => $data ) {
+
+			if ( !is_array( $data ) )
+				continue;
+
+			# ThemeURI is missing from $data by default for some reason
+			$theme_obj = wp_get_theme( $data['Template'] );
+			$data['ThemeURI'] = $theme_obj->get( 'ThemeURI' );
 
 			$item = new EUAPI_Item_Theme( $theme, $data );
 
 			if ( $handler = $this->get_handler( 'theme', $theme, $item ) ) {
 				$handler->item = $item;
-				unset( $themes->themes[$theme] );
+				unset( $themes[$theme] );
 			}
 
 		}
@@ -98,8 +107,12 @@ class EUAPI {
 
 			$update = $handler->get_update();
 
-			if ( $update->get_new_version() and version_compare( $update->get_new_version(), $handler->get_current_version() ) )
-				$transient->response[ $handler->get_file() ] = $update->get_data_to_store();
+			if ( $update->get_new_version() and version_compare( $update->get_new_version(), $handler->get_current_version() ) ) {
+				if ( 'plugin' == $handler->get_type() )
+					$transient->response[ $handler->get_file() ] = (object) $update->get_data_to_store();
+				else
+					$transient->response[ $handler->get_file() ] = $update->get_data_to_store();
+			}
 
 		}
 
@@ -165,7 +178,31 @@ class EUAPI {
 	}
 
 	function get_theme_data( $file ) {
-		return array();
+
+		$theme = wp_get_theme( $file );
+
+		if ( !$theme->exists() )
+			return false;
+
+		$data = array(
+			'Name'        => '',
+			'ThemeURI'    => '',
+			'Description' => '',
+			'Author'      => '',
+			'AuthorURI'   => '',
+			'Version'     => '',
+			'Template'    => '',
+			'Status'      => '',
+			'Tags'        => '',
+			'TextDomain'  => '',
+			'DomainPath'  => '',
+		);
+
+		foreach ( $data as $k => $v )
+			$data[$k] = $theme->get( $k );
+
+		return $data;
+
 	}
 
 	/**
@@ -191,6 +228,25 @@ class EUAPI {
 
 		if ( !$info )
 			return new WP_Error( 'plugins_api_failed', __( 'Unable to connect to update server.', 'euapi' ) );
+
+		return $info;
+
+	}
+
+	public function get_theme_info( $false, $action, $response ) {
+
+		if ( 'theme_information' != $action )
+			return $false;
+
+		$handler = $this->get_handler( 'theme', $response->slug );
+
+		if ( !( $handler = $this->get_handler( 'theme', $response->slug ) ) )
+			return $false;
+
+		$info = $handler->get_info();
+
+		if ( !$info )
+			return new WP_Error( 'themes_api_failed', __( 'Unable to connect to update server.', 'euapi' ) );
 
 		return $info;
 
@@ -244,6 +300,17 @@ class EUAPI {
 		return 2;
 	}
 
+	public function upgrader_pre_install( $true, $hook_extra ) {
+
+		if ( isset( $hook_extra['plugin'] ) )
+			$this->get_handler( 'plugin', $hook_extra['plugin'] );
+		else if ( isset( $hook_extra['theme'] ) )
+			$this->get_handler( 'theme', $hook_extra['theme'] );
+
+		return $true;
+
+	}
+
 	public function upgrader_post_install( $true, $hook_extra, $result ) {
 
 		global $wp_filesystem;
@@ -255,13 +322,20 @@ class EUAPI {
 		else
 			return $true;
 
+		switch ( $handler->get_type() ) {
+
+			case 'plugin':
+				$proper_destination = WP_PLUGIN_DIR . '/' . $handler->config['folder_name'];
+				break;
+			case 'theme':
+				$proper_destination = get_theme_root( $handler->config['file_name'] ) . '/' . $handler->config['file_name'];
+				break;
+
+		}
+
 		// Move
-		$proper_destination = WP_PLUGIN_DIR . '/' . $handler->config['folder_name'];
 		$move = $wp_filesystem->move( $result['destination'], $proper_destination );
 		$result['destination'] = $proper_destination;
-
-		if ( !$move )
-			echo __( 'The plugin has been updated but could not be moved to its correct location.', 'euapi' );
 
 		return $result;
 

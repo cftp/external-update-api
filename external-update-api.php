@@ -2,7 +2,7 @@
 /*
 Plugin Name:  External Update API
 Description:  Add support for updating themes and plugins via external sources instead of wordpress.org
-Version:      0.1
+Version:      0.2
 Author:       Code for the People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  euapi

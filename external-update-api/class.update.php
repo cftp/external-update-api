@@ -13,7 +13,7 @@ class EUAPI_Update {
 	}
 
 	function get_data_to_store() {
-		return (object) get_object_vars( $this );
+		return get_object_vars( $this );
 	}
 
 	function get_new_version() {
