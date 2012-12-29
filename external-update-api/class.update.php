@@ -2,7 +2,7 @@
 
 class EUAPI_Update {
 
-	function __construct( $args ) {
+	function __construct( array $args ) {
 
 		$this->slug           = $args['slug'];
 		$this->new_version    = $args['new_version'];

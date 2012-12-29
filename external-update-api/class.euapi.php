@@ -10,7 +10,7 @@ class EUAPI {
 
 	var $handlers = array();
 
-	public function __construct( $config = array() ) {
+	public function __construct() {
 
 		add_filter( 'http_request_args',                     array( $this, 'http_request_args' ), 20, 2 );
 
@@ -27,7 +27,7 @@ class EUAPI {
 
 	}
 
-	function http_request_args( $args, $url ) {
+	function http_request_args( array $args, $url ) {
 
 		if ( 0 === strpos( $url, 'http://api.wordpress.org/plugins/update-check/' ) )
 			$this->plugin_request( &$args );
@@ -41,7 +41,7 @@ class EUAPI {
 
 	}
 
-	function plugin_request( $args ) {
+	function plugin_request( array $args ) {
 
 		$plugins = unserialize( $args['body']['plugins'] );
 
@@ -60,7 +60,7 @@ class EUAPI {
 
 	}
 
-	function theme_request( $args ) {
+	function theme_request( array $args ) {
 
 		$themes = unserialize( $args['body']['themes'] );
 
@@ -98,7 +98,7 @@ class EUAPI {
 		return $this->check( $transient, $this->handlers['theme'] );
 	}
 
-	public function check( $transient, $handlers ) {
+	public function check( $transient, array $handlers ) {
 
 		if ( empty( $transient->checked ) )
 			return $transient;
@@ -129,9 +129,9 @@ class EUAPI {
 			$item = $this->populate_item( $type, $file );
 
 		if ( !$item )
-			return false;
+			return null;
 
-		$handler = apply_filters( "euapi_{$type}_handler", false, $item );
+		$handler = apply_filters( "euapi_{$type}_handler", null, $item );
 
 		if ( is_a( $handler, 'EUAPI_Handler' ) )
 			$this->handlers[$type][$file] = $handler;
@@ -156,7 +156,7 @@ class EUAPI {
 
 		}
 
-		return false;
+		return null;
 
 	}
 
@@ -252,7 +252,7 @@ class EUAPI {
 
 	}
 
-	function fetch( $url, $args = array() ) {
+	function fetch( $url, array $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
 			'sslverify' => $this->config['sslverify']
@@ -267,7 +267,7 @@ class EUAPI {
 
 	}
 
-	function get_content_data( $content, $all_headers ) {
+	function get_content_data( $content, array $all_headers ) {
 
 		# @see WordPress' get_file_data()
 
@@ -297,10 +297,11 @@ class EUAPI {
 	 * @return int timeout value
 	 */
 	public function http_request_timeout() {
+		# @TODO decide how best to do this
 		return 2;
 	}
 
-	public function upgrader_pre_install( $true, $hook_extra ) {
+	public function upgrader_pre_install( $true, array $hook_extra ) {
 
 		if ( isset( $hook_extra['plugin'] ) )
 			$this->get_handler( 'plugin', $hook_extra['plugin'] );
@@ -311,7 +312,7 @@ class EUAPI {
 
 	}
 
-	public function upgrader_post_install( $true, $hook_extra, $result ) {
+	public function upgrader_post_install( $true, array $hook_extra, array $result ) {
 
 		global $wp_filesystem;
 
@@ -320,6 +321,9 @@ class EUAPI {
 		else if ( isset( $hook_extra['theme'] ) )
 			$handler = $this->get_handler( 'theme', $hook_extra['theme'] );
 		else
+			return $true;
+
+		if ( !$handler )
 			return $true;
 
 		switch ( $handler->get_type() ) {

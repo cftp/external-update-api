@@ -15,7 +15,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 	 * @param array $config configuration
 	 * @return void
 	 */
-	public function __construct( $config = array() ) {
+	public function __construct( array $config = array() ) {
 
 		if ( !isset( $config['github_url'] ) or !isset( $config['file'] ) )
 			return;
@@ -44,9 +44,9 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 			$repo
 		);
 
-		$this->config = wp_parse_args( $config, $defaults );
+		$config = wp_parse_args( $config, $defaults );
 
-		parent::__construct();
+		parent::__construct( $config );
 
 	}
 

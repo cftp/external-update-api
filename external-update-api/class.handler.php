@@ -6,7 +6,7 @@ if ( !defined('ABSPATH') )
 
 if ( ! class_exists( 'EUAPI_Handler' ) ) :
 
-class EUAPI_Handler {
+abstract class EUAPI_Handler {
 
 	/**
 	 * Temporary store the data fetched from remote repo, so it only gets loaded once per class instance
@@ -20,25 +20,21 @@ class EUAPI_Handler {
 	 * @param array $config configuration
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct( array $config = array() ) {
 
-		$this->config = apply_filters( "euapi_{$this->config['type']}_handler_config", $this->config );
+		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", $config );
 
 	}
 
-	function get_plugin_url() {
-		return false;
-	}
+	abstract public function get_plugin_url();
 
-	function get_package_url() {
-		return false;
-	}
+	abstract public function get_package_url();
 
-	function get_file() {
+	final public function get_file() {
 		return $this->config['file'];
 	}
 
-	function get_current_version() {
+	final public function get_current_version() {
 
 		if ( isset( $this->item ) )
 			return $this->item->get_version();
@@ -47,7 +43,7 @@ class EUAPI_Handler {
 
 	}
 
-	function get_new_version() {
+	final public function get_new_version() {
 
 		if ( isset( $this->new_version ) )
 			return $this->new_version;
@@ -56,15 +52,11 @@ class EUAPI_Handler {
 
 	}
 
-	function fetch_new_version() {
-		return false;
-	}
+	abstract public function fetch_new_version();
 
-	function fetch_info() {
-		return false;
-	}
+	abstract public function fetch_info();
 
-	function get_update() {
+	final public function get_update() {
 
 		if ( isset( $this->update ) )
 			return $this->update;
@@ -79,7 +71,7 @@ class EUAPI_Handler {
 
 	}
 
-	function get_info() {
+	final public function get_info() {
 
 		if ( isset( $this->info ) )
 			return $this->info;
@@ -91,11 +83,11 @@ class EUAPI_Handler {
 
 	}
 
-	function get_config() {
+	final public function get_config() {
 		return $this->config;
 	}
 
-	function get_type() {
+	final public function get_type() {
 		return $this->config['type'];
 	}
 

@@ -2,7 +2,7 @@
 /*
 Plugin Name:  External Update API
 Description:  Add support for updating themes and plugins via external sources instead of wordpress.org
-Version:      0.2
+Version:      0.2.1
 Author:       Code for the People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  euapi
@@ -23,6 +23,13 @@ GNU General Public License for more details.
 
 */
 
+/**
+ * Autoloader
+ *
+ * @author John Blackbourn
+ * @param  string $class Class name
+ * @return null
+ */
 function euapi_autoloader( $class ) {
 
 	if ( 0 !== strpos( $class, 'EUAPI' ) )
@@ -37,7 +44,7 @@ function euapi_autoloader( $class ) {
 		$name
 	);
 
-	if ( file_exists( $file ) )
+	if ( is_readable( $file ) )
 		include $file;
 
 }
