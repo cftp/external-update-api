@@ -39,7 +39,7 @@ function euapi_autoloader( $class ) {
 	$name = str_replace( '_', '-', $name );
 	$name = strtolower( $name );
 
-	$file = sprintf( '%1$s/external-update-api/class.%2$s.php',
+	$file = sprintf( '%1$s/external-update-api/%2$s.php',
 		dirname( __FILE__ ),
 		$name
 	);
