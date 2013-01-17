@@ -2,14 +2,14 @@
 /*
 Plugin Name:  External Update API
 Description:  Add support for updating themes and plugins via external sources instead of wordpress.org
-Version:      0.2.1
+Version:      0.2.2
 Author:       Code for the People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  euapi
 Domain Path:  /languages/
 License:      GPL v2 or later
 
-Copyright © 2012 Code for the People Ltd
+Copyright © 2013 Code for the People Ltd
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 */
+
+defined( 'ABSPATH' ) or die();
 
 /**
  * Autoloader
@@ -49,10 +51,15 @@ function euapi_autoloader( $class ) {
 
 }
 
+function euapi_flush_transients() {
+	delete_site_transient( 'update_plugins' );
+	delete_site_transient( 'update_themes' );
+}
+register_activation_hook( __FILE__,   'euapi_flush_transients' );
+register_deactivation_hook( __FILE__, 'euapi_flush_transients' );
+
 spl_autoload_register( 'euapi_autoloader' );
 
 global $euapi;
 
 $euapi = new EUAPI;
-
-defined( 'ABSPATH' ) or die();
