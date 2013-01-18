@@ -31,12 +31,12 @@ class EUAPI {
 		if ( 0 === strpos( $url, 'http://api.wordpress.org/themes/update-check/' ) )
 			return $this->theme_request( $args );
 
-		$query = parse_url( $url, PHP_URL_QUERY );
+		parse_url( $url, $arr = array() );
 
-		if ( empty( $query ) )
+		if ( !isset( $arr['query'] ) )
 			return $args;
 
-		parse_str( $query, $query );
+		parse_str( $arr['query'], $query = array() );
 
 		if ( !isset( $query['_euapi_type'] ) or !isset( $query['_euapi_file'] ) )
 			return $args;

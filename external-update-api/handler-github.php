@@ -46,10 +46,10 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	function find_access_token( $key ) {
 
-		$op = get_option( 'euapi_github_access_tokens', array() );
+		$op = get_option( 'euapi_github_access_token' );
 
-		if ( is_array( $op ) and isset( $op[$key] ) )
-			return $op[$key];
+		if ( !empty( $op ) )
+			return $op;
 
 		return null;
 
