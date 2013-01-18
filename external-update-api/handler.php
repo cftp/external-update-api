@@ -1,17 +1,10 @@
 <?php
 
-// Prevent loading this file directly - Busted!
-if ( !defined('ABSPATH') )
-	die('-1');
+defined( 'ABSPATH' ) or die();
 
 if ( ! class_exists( 'EUAPI_Handler' ) ) :
 
 abstract class EUAPI_Handler {
-
-	/**
-	 * Temporary store the data fetched from remote repo, so it only gets loaded once per class instance
-	 */
-	public $data;
 
 	/**
 	 * Class Constructor
@@ -29,6 +22,10 @@ abstract class EUAPI_Handler {
 	abstract public function get_plugin_url();
 
 	abstract public function get_package_url();
+
+	abstract public function fetch_new_version();
+
+	abstract public function fetch_info();
 
 	final public function get_file() {
 		return $this->config['file'];
@@ -52,20 +49,21 @@ abstract class EUAPI_Handler {
 
 	}
 
-	abstract public function fetch_new_version();
-
-	abstract public function fetch_info();
-
 	final public function get_update() {
 
 		if ( isset( $this->update ) )
 			return $this->update;
 
+		$package = add_query_arg( array(
+			'_euapi_type' => $this->get_type(),
+			'_euapi_file' => $this->get_file()
+		), $this->get_package_url() );
+
 		return $this->update = new EUAPI_Update( array(
 			'slug'        => $this->get_file(),
 			'new_version' => $this->get_new_version(),
 			'url'         => $this->get_plugin_url(),
-			'package'     => $this->get_package_url(),
+			'package'     => $package,
 			'config'      => $this->get_config(),
 		) );
 

@@ -1,8 +1,6 @@
 <?php
 
-// Prevent loading this file directly - Busted!
-if ( !defined('ABSPATH') )
-	die('-1');
+defined( 'ABSPATH' ) or die();
 
 if ( ! class_exists( 'EUAPI_Handler_Github' ) ) :
 
@@ -22,7 +20,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 		$defaults = array(
 			'type'         => 'plugin',
-			'access_token' => null,
+			'access_token' => $this->find_access_token( $config['github_url'] ),
 			'folder_name'  => dirname( $config['file'] ),
 			'file_name'    => basename( $config['file'] ),
 			'sslverify'    => true,
@@ -31,11 +29,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 		$path = trim( parse_url( $config['github_url'], PHP_URL_PATH ), '/' );
 		list( $username, $repo ) = explode( '/', $path, 2 );
 
-		$defaults['api_url'] = sprintf( 'https://api.github.com/repos/%1$s/%2$s',
-			$username,
-			$repo
-		);
-		$defaults['raw_url'] = sprintf( 'https://raw.github.com/%1$s/%2$s/master',
+		$defaults['base_url'] = sprintf( 'https://raw.github.com/%1$s/%2$s/master',
 			$username,
 			$repo
 		);
@@ -50,6 +44,17 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	}
 
+	function find_access_token( $key ) {
+
+		$op = get_option( 'euapi_github_access_tokens', array() );
+
+		if ( is_array( $op ) and isset( $op[$key] ) )
+			return $op[$key];
+
+		return null;
+
+	}
+
 	/**
 	 * Get New Version from github
 	 *
@@ -58,7 +63,9 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 	 */
 	public function fetch_new_version() {
 
-		$response = EUAPI::fetch( $this->get_file_url() );
+		$response = EUAPI::fetch( $this->get_file_url(), array(
+			'sslverify' => $this->config['sslverify']
+		) );
 
 		if ( empty( $response ) )
 			return false;
@@ -85,7 +92,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 		if ( empty( $file ) )
 			$file = $this->config['file_name'];
 
-		$url = trailingslashit( $this->config['raw_url'] ) . $file;
+		$url = trailingslashit( $this->config['base_url'] ) . $file;
 
 		if ( !empty( $this->config['access_token'] ) ) {
 			$url = add_query_arg( array(
@@ -131,7 +138,9 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 		}
 
-		$response = EUAPI::fetch( $file );
+		$response = EUAPI::fetch( $file, array(
+			'sslverify' => $this->config['sslverify']
+		) );
 
 		if ( empty( $response ) )
 			return false;
