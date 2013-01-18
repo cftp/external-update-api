@@ -31,12 +31,12 @@ class EUAPI {
 		if ( 0 === strpos( $url, 'http://api.wordpress.org/themes/update-check/' ) )
 			return $this->theme_request( $args );
 
-		parse_url( $url, $arr = array() );
+		$query = parse_url( $url, PHP_URL_QUERY );
 
-		if ( !isset( $arr['query'] ) )
+		if ( empty( $query ) )
 			return $args;
 
-		parse_str( $arr['query'], $query = array() );
+		parse_str( $query, $query );
 
 		if ( !isset( $query['_euapi_type'] ) or !isset( $query['_euapi_file'] ) )
 			return $args;
@@ -308,15 +308,10 @@ class EUAPI {
 
 	public function upgrader_pre_install( $true, array $hook_extra ) {
 
-		rofl($hook_extra);
-
 		if ( isset( $hook_extra['plugin'] ) )
 			$this->get_handler( 'plugin', $hook_extra['plugin'] );
 		else if ( isset( $hook_extra['theme'] ) )
 			$this->get_handler( 'theme', $hook_extra['theme'] );
-
-		rofl($this->handlers);
-		die();
 
 		return $true;
 
