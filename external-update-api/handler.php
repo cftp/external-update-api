@@ -42,10 +42,10 @@ abstract class EUAPI_Handler {
 
 	final public function get_new_version() {
 
-		if ( isset( $this->new_version ) )
-			return $this->new_version;
-		else
-			return $this->new_version = $this->fetch_new_version();
+		if ( !isset( $this->new_version ) )
+			$this->new_version = $this->fetch_new_version();
+
+		return $this->new_version;
 
 	}
 
@@ -69,15 +69,15 @@ abstract class EUAPI_Handler {
 
 	}
 
+	/**
+	 * @return WP_Error|EUAPI_Info 
+	 */
 	final public function get_info() {
 
-		if ( isset( $this->info ) )
-			return $this->info;
+		if ( !isset( $this->info ) )
+			$this->info = $this->fetch_info();
 
-		if ( !( $info = $this->fetch_info() ) )
-			return $this->info = false;
-
-		return $this->info = new EUAPI_Info( $info );
+		return $this->info;
 
 	}
 

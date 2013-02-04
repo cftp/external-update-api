@@ -59,7 +59,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 	 * Get New Version from github
 	 *
 	 * @since 1.0
-	 * @return int $version the version number
+	 * @return false|string New version number
 	 */
 	public function fetch_new_version() {
 
@@ -67,7 +67,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 			'sslverify' => $this->config['sslverify']
 		) );
 
-		if ( empty( $response ) )
+		if ( is_wp_error( $response ) )
 			return false;
 
 		$data = EUAPI::get_content_data( $response, array(
@@ -117,6 +117,10 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	}
 
+	/**
+	 * @return WP_Error|EUAPI_info
+	 */
+
 	function fetch_info() {
 
 		$fields = array(
@@ -142,8 +146,8 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 			'sslverify' => $this->config['sslverify']
 		) );
 
-		if ( empty( $response ) )
-			return false;
+		if ( is_wp_error( $response ) )
+			return $response;
 
 		$data = EUAPI::get_content_data( $response, $fields );
 
@@ -163,7 +167,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 		) );
 
-		return $info;
+		return new EUAPI_Info( $info );
 
 	}
 

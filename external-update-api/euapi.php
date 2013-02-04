@@ -226,7 +226,7 @@ class EUAPI {
 	 * @param bool $false always false
 	 * @param string $action the API function being performed
 	 * @param object $args plugin arguments
-	 * @return object $response the plugin info
+	 * @return bool|WP_Error|EUAPI_Info 
 	 */
 	public function get_plugin_info( $false, $action, $response ) {
 
@@ -238,34 +238,33 @@ class EUAPI {
 		if ( !( $handler = $this->get_handler( 'plugin', $response->slug ) ) )
 			return $false;
 
-		$info = $handler->get_info();
-
-		if ( !$info )
-			return new WP_Error( 'plugins_api_failed', __( 'Unable to connect to update server.', 'euapi' ) );
-
-		return $info;
+		return $handler->get_info();
 
 	}
 
+	/**
+	 * @return bool|WP_Error|EUAPI_Info 
+	 */
 	public function get_theme_info( $false, $action, $response ) {
 
 		if ( 'theme_information' != $action )
 			return $false;
 
-		$handler = $this->get_handler( 'theme', $response->slug );
-
 		if ( !( $handler = $this->get_handler( 'theme', $response->slug ) ) )
 			return $false;
 
-		$info = $handler->get_info();
-
-		if ( !$info )
-			return new WP_Error( 'themes_api_failed', __( 'Unable to connect to update server.', 'euapi' ) );
-
-		return $info;
+		return $handler->get_info();
 
 	}
 
+	/**
+	 * Fetch the contents of a URL.
+	 *
+	 * @author John Blackbourn
+	 * @param  string   $url   URL to fetch.
+	 * @param  array    $args  Array of arguments passed to wp_remote_get().
+	 * @return WP_Error|string WP_Error object on failure, string contents of file on success.
+	 */
 	function fetch( $url, array $args = array() ) {
 
 		$args = wp_parse_args( $args, array(
@@ -274,10 +273,15 @@ class EUAPI {
 
 		$response = wp_remote_get( $url, $args );
 
-		if ( !$response or is_wp_error( $response ) )
-			return false;
-		if ( 200 != wp_remote_retrieve_response_code( $response ) )
-			return false;
+		if ( is_wp_error( $response ) )
+			return $response;
+
+		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
+			return new WP_Error( 'fetch_failed', sprintf( __( 'Received HTTP response code %s (%s).', 'euapi' ),
+				esc_html( wp_remote_retrieve_response_code( $response ) ),
+				esc_html( wp_remote_retrieve_response_message( $response ) )
+			) );
+		}
 
 		return wp_remote_retrieve_body( $response );
 
