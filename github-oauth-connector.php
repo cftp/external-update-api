@@ -2,7 +2,7 @@
 /*
 Plugin Name:  GitHub OAuth Connector
 Description:  Provides an interface for fetching and storing an OAuth access token from a GitHub application.
-Version:      1.6
+Version:      1.6.1
 Author:       Code for the People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  github-oauth-connector
@@ -35,12 +35,35 @@ class GitHub_OAuth_Connector {
 	 */
 	function __construct() {
 
-		add_action( 'admin_init',                       array( $this, 'settings_fields' ) );
-		add_action( 'admin_menu',                       array( $this, 'add_page' ) );
-		add_action( 'network_admin_menu',               array( $this, 'add_page' ) );
+		add_action( 'admin_init',                               array( $this, 'settings_fields' ) );
+		add_action( 'admin_menu',                               array( $this, 'add_page' ) );
+		add_action( 'admin_notices',                            array( $this, 'admin_notices' ) );
+		add_action( 'init',                                     array( $this, 'init' ) );
+		add_action( 'wp_ajax_set_github_oauth_key',             array( $this, 'ajax_set_github_oauth_key') );
+		add_action( 'load-plugins_page_github-oauth-connector', array( $this, 'maybe_authorise') );
+	}
 
-		add_action( 'wp_ajax_set_github_oauth_key',     array( $this, 'ajax_set_github_oauth_key') );
-		add_action( 'load-plugins_page_github-updater', array( $this, 'maybe_authorise') );
+	/**
+	 * Load localisation files.
+	 *
+	 * @return null
+	 */
+	function init() {
+		load_plugin_textdomain( 'github-oauth-connector', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+
+	function admin_notices() {
+		if ( !isset( $_GET['page'] ) or ( 'github-oauth-connector' != $_GET['page'] ) )
+			return;
+		if ( !isset( $_GET['authorised'] ) or ( 'true' != $_GET['authorised'] ) )
+			return;
+
+		?>
+		<div id="github-authorised" class="updated">
+			<p><?php _e( 'GitHub connection successful. You can now safely deactivate the GitHub OAuth Connector plugin.', 'github-oauth-connector' ); ?></p>
+		</div>
+		<?php
+
 	}
 
 	/**
@@ -49,7 +72,7 @@ class GitHub_OAuth_Connector {
 	 * @return null
 	 */
 	function add_page() {
-		add_plugins_page ( __( 'GitHub Updates', 'github-oauth-connector' ), __( 'GitHub Updates', 'github-oauth-connector' ), 'update_plugins', 'github-updater', array( $this, 'admin_page' ) );
+		add_plugins_page ( __( 'GitHub Connector', 'github-oauth-connector' ), __( 'GitHub Connector', 'github-oauth-connector' ), 'update_plugins', 'github-oauth-connector', array( $this, 'admin_page' ) );
 	}
 
 	/**
@@ -62,11 +85,11 @@ class GitHub_OAuth_Connector {
 		register_setting( 'ghupdate', 'ghupdate', array( $this, 'settings_validate' ) );
 
 		// Sections: ID, Label, Description callback, Page ID
-		add_settings_section( 'ghupdate_private', 'Private Repositories', array( $this, 'private_description' ), 'github-updater' );
+		add_settings_section( 'ghupdate_private', 'Private Repositories', array( $this, 'private_description' ), 'github-oauth-connector' );
 
 		// Private Repo Fields: ID, Label, Display callback, Menu page slug, Form section, callback arguements
 		add_settings_field(
-			'client_id', __( 'Client ID', 'github-oauth-connector' ), array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
+			'client_id', __( 'Client ID', 'github-oauth-connector' ), array( $this, 'input_field' ), 'github-oauth-connector', 'ghupdate_private',
 			array(
 				'id'          => 'client_id',
 				'type'        => 'text',
@@ -74,7 +97,7 @@ class GitHub_OAuth_Connector {
 			)
 		);
 		add_settings_field(
-			'client_secret', __( 'Client Secret', 'github-oauth-connector' ), array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
+			'client_secret', __( 'Client Secret', 'github-oauth-connector' ), array( $this, 'input_field' ), 'github-oauth-connector', 'ghupdate_private',
 			array(
 				'id'          => 'client_secret',
 				'type'        => 'text',
@@ -82,7 +105,7 @@ class GitHub_OAuth_Connector {
 			)
 		);
 		add_settings_field(
-			'access_token', __( 'Access Token', 'github-oauth-connector' ), array( $this, 'token_field' ), 'github-updater', 'ghupdate_private',
+			'access_token', __( 'Access Token', 'github-oauth-connector' ), array( $this, 'token_field' ), 'github-oauth-connector', 'ghupdate_private',
 			array(
 				'id' => 'access_token',
 			)
@@ -102,10 +125,10 @@ class GitHub_OAuth_Connector {
 		$callback = get_site_url( null, '', 'admin' );
 
 		?>
-		<p><?php _e( 'Updating from private repositories requires a one-time application setup and authorisation.', 'github-oauth-connector' ); ?></p>
+		<p><?php _e( 'Updating from private repositories on GitHub requires a one-time application setup and authorisation.', 'github-oauth-connector' ); ?></p>
 		<p><?php _e( 'Follow these steps:', 'github-oauth-connector' ); ?></p>
 		<ol>
-			<li><?php printf( __( '<a href="%s" target="_blank">Create an application on GitHub.com</a> using the following values:', 'github-oauth-connector' ), 'https://github.com/settings/applications/new' ); ?>
+			<li><?php printf( __( '<a href="%s" target="_blank">Create an application on GitHub</a> using the following values:', 'github-oauth-connector' ), 'https://github.com/settings/applications/new' ); ?>
 				<ul>
 					<li><?php printf( __( '<strong>Name:</strong> <code>%s</code>', 'github-oauth-connector' ), $name ); ?></li>
 					<li><?php printf( __( '<strong>URL:</strong> <code>%s</code>', 'github-oauth-connector' ), $url ); ?></li>
@@ -125,12 +148,12 @@ class GitHub_OAuth_Connector {
 	 * @return null
 	 */
 	public function input_field( $args ) {
-		extract($args);
-		$gh = get_option('ghupdate');
+		extract( $args );
+		$gh = get_option( 'ghupdate' );
 		$value = $gh[$id];
 		?>
-		<input value="<?php esc_attr_e($value)?>" name="<?php esc_attr_e($id) ?>" id="<?php esc_attr_e($id) ?>" type="text" class="regular-text" />
-		<?php echo $description ?>
+		<input value="<?php esc_attr_e( $value ); ?>" name="<?php esc_attr_e( $id ); ?>" id="<?php esc_attr_e( $id ); ?>" type="text" class="regular-text" />
+		<?php echo $description; ?>
 		<?php
 	}
 
@@ -141,18 +164,18 @@ class GitHub_OAuth_Connector {
 	 * @return null
 	 */
 	public function token_field( $args ) {
-		extract($args);
-		$gh = get_option('ghupdate');
+		extract( $args );
+		$gh = get_option( 'ghupdate' );
 		$value = $gh[$id];
 
-		if ( empty($value) ) {
+		if ( empty( $value ) ) {
 			?>
-			<p>Input Client ID and Client Secret, then click 'Authorise with GitHub'.</p>
-			<input value="<?php esc_attr_e($value)?>" name="<?php esc_attr_e($id) ?>" id="<?php esc_attr_e($id) ?>" type="hidden" />
+			<p><?php _e( 'Input Client ID and Client Secret, then click &lsquo;Authorise with GitHub&rsquo;.', 'github-oauth-connector' ); ?></p>
+			<input value="<?php esc_attr_e( $value ); ?>" name="<?php esc_attr_e( $id ); ?>" id="<?php esc_attr_e( $id ); ?>" type="hidden" />
 			<?php
 		}else{
 			?>
-			<input value="<?php esc_attr_e($value)?>" name="<?php esc_attr_e($id) ?>" id="<?php esc_attr_e($id) ?>" type="text" class="regular-text" />
+			<input value="<?php esc_attr_e( $value ); ?>" name="<?php esc_attr_e( $id ); ?>" id="<?php esc_attr_e( $id ); ?>" type="text" class="regular-text" />
 			<?php
 		}
 		?>
@@ -169,10 +192,10 @@ class GitHub_OAuth_Connector {
 		if ( empty( $input ) ) {
 			$input = $_POST;
 		}
-		if ( !is_array($input) ) {
+		if ( !is_array( $input ) ) {
 			return false;
 		}
-		$gh = get_option('ghupdate');
+		$gh = get_option( 'ghupdate' );
 		$valid = array();
 
 		$valid['client_id']     = strip_tags( stripslashes( $input['client_id'] ) );
@@ -180,10 +203,10 @@ class GitHub_OAuth_Connector {
 		$valid['access_token']  = strip_tags( stripslashes( $input['access_token'] ) );
 
 		if ( empty( $valid['client_id']) ) {
-			add_settings_error( 'client_id', 'no-client-id', __('Please input a Client ID before authorizing.', 'github_plugin_updater'), 'error' );
+			add_settings_error( 'client_id', 'no-client-id', __( 'Please input a Client ID before authorising.', 'github-oauth-connector' ), 'error' );
 		}
 		if ( empty( $valid['client_secret']) ) {
-			add_settings_error( 'client_secret', 'no-client-secret', __('Please input a Client Secret before authorizing.', 'github_plugin_updater'), 'error' );
+			add_settings_error( 'client_secret', 'no-client-secret', __( 'Please input a Client Secret before authorising.', 'github-oauth-connector' ), 'error' );
 		}
 
 		return $valid;
@@ -200,7 +223,7 @@ class GitHub_OAuth_Connector {
 
 			<div class="head-wrap">
 				<?php screen_icon('plugins'); ?>
-				<h2><?php _e( 'Setup GitHub Updates' , 'github_plugin_updater' ); ?></h2>
+				<h2><?php _e( 'Setup GitHub Connection' , 'github-oauth-connector' ); ?></h2>
 			</div>
 
 			<div class="postbox-container primary">
@@ -208,8 +231,8 @@ class GitHub_OAuth_Connector {
 					<?php
 						settings_errors();
 						settings_fields('ghupdate'); // includes nonce
-						do_settings_sections( 'github-updater' );
-						submit_button( __( 'Authorise with GitHub', 'github_plugin_updater' ) )
+						do_settings_sections( 'github-oauth-connector' );
+						submit_button( __( 'Authorise with GitHub &raquo;', 'github-oauth-connector' ) )
 					?>
 				</form>
 			</div>
@@ -234,14 +257,11 @@ class GitHub_OAuth_Connector {
 
 		$redirect_uri = urlencode(admin_url('admin-ajax.php?action=set_github_oauth_key'));
 
-		// Send user to GitHub for account authorization
-
-		# https://github.com/login/oauth/authorize?scopes=repo&client_id=a126bc95237ff7299c6d
-
+		// Send user to GitHub for account authorisation
 		$query = 'https://github.com/login/oauth/authorize';
 		$query_args = array(
-			'scope' => 'repo',
-			'client_id' => $gh['client_id'],
+			'scope'        => 'repo',
+			'client_id'    => $gh['client_id'],
 			'redirect_uri' => $redirect_uri,
 		);
 		$query = add_query_arg($query_args, $query);
@@ -260,7 +280,7 @@ class GitHub_OAuth_Connector {
 		$gh = get_option('ghupdate');
 
 		$query = admin_url( 'plugins.php' );
-		$query = add_query_arg( array('page' => 'github-updater'), $query );
+		$query = add_query_arg( array( 'page' => 'github-oauth-connector' ), $query );
 
 		if ( isset($_GET['code']) ) {
 			// Receive authorised token
@@ -271,7 +291,7 @@ class GitHub_OAuth_Connector {
 				'code'          => stripslashes( $_GET['code'] ),
 			);
 			$query = add_query_arg( $query_args, $query );
-			$response = wp_remote_get( $query, array('sslverify' => false) );
+			$response = wp_remote_get( $query, array( 'sslverify' => false ) );
 			parse_str( $response['body'] ); // populates $access_token, $token_type
 
 			if ( isset( $access_token ) and !empty( $access_token ) ) {
@@ -279,7 +299,7 @@ class GitHub_OAuth_Connector {
 				update_option( 'euapi_github_access_token', $access_token );
 				update_option('ghupdate', $gh );
 				$query = add_query_arg( array(
-					'page'       => 'github-updater',
+					'page'       => 'github-oauth-connector',
 					'authorised' => 'true'
 				), admin_url( 'plugins.php' ) );
 				wp_redirect( $query );
@@ -288,7 +308,7 @@ class GitHub_OAuth_Connector {
 
 		}
 
-		$query = add_query_arg( array('authorised'=>'false'), $query );
+		$query = add_query_arg( array( 'authorised' => 'false' ), $query );
 		wp_redirect($query);
 		exit;
 
