@@ -1,6 +1,7 @@
 <?php
 /*
 Plugin Name:  External Update API
+Plugin URI:   https://github.com/cftp/external-update-api
 Description:  Add support for updating themes and plugins via external sources instead of wordpress.org
 Version:      0.2.4
 Author:       Code for the People
