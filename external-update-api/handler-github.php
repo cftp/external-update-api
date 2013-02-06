@@ -27,7 +27,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 
 		$defaults = array(
 			'type'         => 'plugin',
-			'access_token' => $this->find_access_token(),
+			'access_token' => null,
 			'folder_name'  => dirname( $config['file'] ),
 			'file_name'    => basename( $config['file'] ),
 			'sslverify'    => true,
@@ -48,23 +48,6 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 		$config = wp_parse_args( $config, $defaults );
 
 		parent::__construct( $config );
-
-	}
-
-	/**
-	 * Fetches the stored GitHub OAuth access token, if there is one.
-	 *
-	 * @author John Blackbourn
-	 * @return string|null The access token, if one is present, else null.
-	 */
-	function find_access_token() {
-
-		$op = get_option( 'euapi_github_access_token' );
-
-		if ( !empty( $op ) )
-			return $op;
-
-		return null;
 
 	}
 
