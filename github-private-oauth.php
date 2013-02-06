@@ -1,24 +1,16 @@
 <?php
 /*
-Plugin Name: WP Private GitHub Plugin Updater
-Plugin URI: https://github.com/jkudish/WordPress-GitHub-Plugin-Updater
-Description: Semi-automated test for the GitHub Plugin Updater
-Version: 0.1
-Author: Joachim Kudish
-Author URI: http://jkudish.com/
-License: GPLv2
-*/
+Plugin Name:  GitHub OAuth Connector
+Description:  Provides an interface for fetching and storing an OAuth access token from a GitHub application.
+Version:      1.6
+Author:       Code for the People
+Author URI:   http://codeforthepeople.com/
+Text Domain:  github-oauth-connector
+Domain Path:  /languages/
+License:      GPL v2 or later
 
-/**
- * Note: the version # above is purposely low in order to be able to test the updater
- * The real version # is below
- * @package GitHubUpdater
- * @author Joachim Kudish @link http://jkudish.com
- * @since 1.3
- * @version 1.5
-*/
+This plugin was originally based off of "WP Private GitHub Plugin Updater" plugin by Paul Clark (http://brainstormmedia.com/) and Joachim Kudish (http://jkudish.com). See https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/pull/15 for more details.
 
-/*
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
@@ -29,70 +21,68 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-
 /**
- * Configuration assistant for updating from private repositories.
- * Do not include this in your plugin once you get your access token.
- *
- * @see /wp-admin/plugins.php?page=github-updater
+ * Configuration assistant for fetching and storing an OAuth access token from a GitHub application.
  */
-class WPGitHubUpdaterSetup{
+class GitHub_OAuth_Connector {
 
+	/**
+	 * Class constructor. Set up some actions and filters.
+	 *
+	 * @return null
+	 */
 	function __construct() {
 
-		add_action( 'admin_init', array( $this, 'settings_fields' ) );
-		add_action( 'admin_menu', array( $this, 'add_page' ) );
-		add_action( 'network_admin_menu', array( $this, 'add_page' ) );
+		add_action( 'admin_init',                       array( $this, 'settings_fields' ) );
+		add_action( 'admin_menu',                       array( $this, 'add_page' ) );
+		add_action( 'network_admin_menu',               array( $this, 'add_page' ) );
 
-		add_action( 'wp_ajax_set_github_oauth_key', array( $this, 'ajax_set_github_oauth_key') );
+		add_action( 'wp_ajax_set_github_oauth_key',     array( $this, 'ajax_set_github_oauth_key') );
 		add_action( 'load-plugins_page_github-updater', array( $this, 'maybe_authorize') );
 	}
 
 	/**
 	 * Add the options page
 	 *
-	 * @return none
+	 * @return null
 	 */
 	function add_page() {
-		add_plugins_page ( __( 'GitHub Updates', 'github_plugin_updater' ), __( 'GitHub Updates', 'github_plugin_updater' ), 'update_plugins', 'github-updater', array( $this, 'admin_page' ) );
+		add_plugins_page ( __( 'GitHub Updates', 'github-oauth-connector' ), __( 'GitHub Updates', 'github-oauth-connector' ), 'update_plugins', 'github-updater', array( $this, 'admin_page' ) );
 	}
 
 	/**
 	 * Add fields and groups to the settings page
 	 *
-	 * @return none
+	 * @return null
 	 */
 	public function settings_fields() {
 
-		register_setting( 'ghupdate', 'ghupdate', array($this, 'settings_validate') );
+		register_setting( 'ghupdate', 'ghupdate', array( $this, 'settings_validate' ) );
 
 		// Sections: ID, Label, Description callback, Page ID
-		add_settings_section( 'ghupdate_private', 'Private Repositories', array($this, 'private_description'), 'github-updater' );
+		add_settings_section( 'ghupdate_private', 'Private Repositories', array( $this, 'private_description' ), 'github-updater' );
 
 		// Private Repo Fields: ID, Label, Display callback, Menu page slug, Form section, callback arguements
 		add_settings_field(
-			'client_id', 'Client ID', array($this, 'input_field'), 'github-updater', 'ghupdate_private',
+			'client_id', 'Client ID', array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
 			array(
-				'id' => 'client_id',
-				'type' => 'text',
+				'id'          => 'client_id',
+				'type'        => 'text',
 				'description' => '',
 			)
 		);
 		add_settings_field(
-			'client_secret', 'Client Secret', array($this, 'input_field'), 'github-updater', 'ghupdate_private',
+			'client_secret', 'Client Secret', array( $this, 'input_field' ), 'github-updater', 'ghupdate_private',
 			array(
-				'id' => 'client_secret',
-				'type' => 'text',
+				'id'          => 'client_secret',
+				'type'        => 'text',
 				'description' => '',
 			)
 		);
 		add_settings_field(
-			'access_token', 'Access Token', array($this, 'token_field'), 'github-updater', 'ghupdate_private',
+			'access_token', 'Access Token', array( $this, 'token_field' ), 'github-updater', 'ghupdate_private',
 			array(
 				'id' => 'access_token',
 			)
@@ -100,6 +90,11 @@ class WPGitHubUpdaterSetup{
 
 	}
 
+	/**
+	 * Output the description field for the settings screen.
+	 *
+	 * @return null
+	 */
 	public function private_description() {
 
 		$name     = preg_replace( '|^https?://|', '', home_url() );
@@ -123,6 +118,12 @@ class WPGitHubUpdaterSetup{
 		<?php
 	}
 
+	/**
+	 * Output a text input field for the settings screen.
+	 *
+	 * @param  array $args Arguments for this field
+	 * @return null
+	 */
 	public function input_field( $args ) {
 		extract($args);
 		$gh = get_option('ghupdate');
@@ -133,6 +134,12 @@ class WPGitHubUpdaterSetup{
 		<?php
 	}
 
+	/**
+	 * Output the access token field for the settings screen.
+	 *
+	 * @param  array $args Arguments for this field
+	 * @return null
+	 */
 	public function token_field( $args ) {
 		extract($args);
 		$gh = get_option('ghupdate');
@@ -152,6 +159,12 @@ class WPGitHubUpdaterSetup{
 		<?php
 	}
 
+	/**
+	 * Validate and sanitise the settings fields when they're saved.
+	 *
+	 * @param  array $input The user entered fields.
+	 * @return array        The sanitised fields.
+	 */
 	public function settings_validate( $input ) {
 		if ( empty( $input ) ) {
 			$input = $_POST;
@@ -179,7 +192,7 @@ class WPGitHubUpdaterSetup{
 	/**
 	 * Output the setup page
 	 *
-	 * @return none
+	 * @return null
 	 */
 	function admin_page() {
 		?>
@@ -205,6 +218,11 @@ class WPGitHubUpdaterSetup{
 		<?php
 	}
 
+	/**
+	 * Redirect the user to the GitHub OAuth authorisation screen if necessary.
+	 *
+	 * @return null
+	 */
 	public function maybe_authorize() {
 		$gh = get_option('ghupdate');
 		if ( 'false' == $_GET['authorize'] || 'true' != $_GET['settings-updated'] || empty($gh['client_id']) || empty($gh['client_secret']) ) {
@@ -230,6 +248,11 @@ class WPGitHubUpdaterSetup{
 
 	}
 
+	/**
+	 * Callback handler for the OAuth connection response. Saves the access token to the database.
+	 *
+	 * @return null
+	 */
 	public function ajax_set_github_oauth_key() {
 		$gh = get_option('ghupdate');
 
@@ -270,4 +293,4 @@ class WPGitHubUpdaterSetup{
 
 }
 
-add_action('init', create_function('', 'global $WPGitHubUpdaterSetup; $WPGitHubUpdaterSetup = new WPGitHubUpdaterSetup();') );
+add_action('init', create_function('', 'global $GitHub_OAuth_Connector; $GitHub_OAuth_Connector = new GitHub_OAuth_Connector();') );
