@@ -4,33 +4,69 @@ defined( 'ABSPATH' ) or die();
 
 if ( ! class_exists( 'EUAPI_Handler' ) ) :
 
+/**
+ * Abstract class upon which to build update handlers.
+ */
 abstract class EUAPI_Handler {
 
 	/**
-	 * Class Constructor
+	 * Class constructor
 	 *
-	 * @since 1.0
-	 * @param array $config configuration
+	 * @param  array $config Configuration for the handler.
 	 * @return void
 	 */
 	public function __construct( array $config = array() ) {
-
 		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", $config );
-
 	}
 
+	/**
+	 * Return the URL of the item's homepage.
+	 *
+	 * @abstract
+	 * @return string URL of the item's homepage.
+	 */
 	abstract public function get_plugin_url();
 
+	/**
+	 * Return the URL of the item's ZIP package.
+	 *
+	 * @abstract
+	 * @return string URL of the item's ZIP package.
+	 */
 	abstract public function get_package_url();
 
+	/**
+	 * Fetch the latest version number of the item, typically from an external location.
+	 *
+	 * @abstract
+	 * @return string|false Version number, or false on failure.
+	 */
 	abstract public function fetch_new_version();
 
+	/**
+	 * Fetch info about the latest version of the item.
+	 *
+	 * @abstract
+	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
+	 */
 	abstract public function fetch_info();
 
+	/**
+	 * Get the current item's base file name (eg. my-plugin/my-plugin.php or my-theme/style.css).
+	 *
+	 * @author John Blackbourn
+	 * @return string File name
+	 */
 	final public function get_file() {
 		return $this->config['file'];
 	}
 
+	/**
+	 * Get the current installed version number of the item.
+	 *
+	 * @author John Blackbourn
+	 * @return string|false Version number, or false on failure.
+	 */
 	final public function get_current_version() {
 
 		if ( isset( $this->item ) )
@@ -40,6 +76,12 @@ abstract class EUAPI_Handler {
 
 	}
 
+	/**
+	 * Get the latest version number of the item.
+	 *
+	 * @author John Blackbourn
+	 * @return string|false Version number, or false on failure.
+	 */
 	final public function get_new_version() {
 
 		if ( !isset( $this->new_version ) )
@@ -49,6 +91,12 @@ abstract class EUAPI_Handler {
 
 	}
 
+	/**
+	 * Get the update object for the item.
+	 *
+	 * @author John Blackbourn
+	 * @return EUAPI_Update Object containing various info about the latest update.
+	 */
 	final public function get_update() {
 
 		if ( isset( $this->update ) )
@@ -70,7 +118,10 @@ abstract class EUAPI_Handler {
 	}
 
 	/**
-	 * @return WP_Error|EUAPI_Info 
+	 * Get the info object for the item.
+	 *
+	 * @author John Blackbourn
+	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
 	 */
 	final public function get_info() {
 
@@ -81,10 +132,22 @@ abstract class EUAPI_Handler {
 
 	}
 
+	/**
+	 * Helper function to get the current item config.
+	 *
+	 * @author John Blackbourn
+	 * @return array Config array.
+	 */
 	final public function get_config() {
 		return $this->config;
 	}
 
+	/**
+	 * Helper function to get the handler type (either 'plugin' or 'theme').
+	 *
+	 * @author John Blackbourn
+	 * @return string Handler type.
+	 */
 	final public function get_type() {
 		return $this->config['type'];
 	}

@@ -2,15 +2,22 @@
 
 defined( 'ABSPATH' ) or die();
 
-if ( ! class_exists( 'EUAPI_Handler_Github' ) ) :
+if ( ! class_exists( 'EUAPI_Handler_GitHub' ) ) :
 
-class EUAPI_Handler_Github extends EUAPI_Handler {
+/**
+ * EUAPI handler for plugins and themes hosted on GitHub.com.
+ * 
+ * Supports public and private repos.
+ * 
+ * If a repo is private then a valid OAuth access token must be passed in the 'access_token' argument.
+ * See http://developer.github.com/v3/oauth/ for details.
+ */
+class EUAPI_Handler_GitHub extends EUAPI_Handler {
 
 	/**
-	 * Class Constructor
+	 * Class constructor
 	 *
-	 * @since 1.0
-	 * @param array $config configuration
+	 * @param  array $config Configuration for the handler.
 	 * @return void
 	 */
 	public function __construct( array $config = array() ) {
@@ -20,7 +27,7 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 		$defaults = array(
 			'type'         => 'plugin',
-			'access_token' => $this->find_access_token( $config['github_url'] ),
+			'access_token' => $this->find_access_token(),
 			'folder_name'  => dirname( $config['file'] ),
 			'file_name'    => basename( $config['file'] ),
 			'sslverify'    => true,
@@ -44,7 +51,13 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	}
 
-	function find_access_token( $key ) {
+	/**
+	 * Fetches the stored GitHub OAuth access token, if there is one.
+	 *
+	 * @author John Blackbourn
+	 * @return string|null The access token, if one is present, else null.
+	 */
+	function find_access_token() {
 
 		$op = get_option( 'euapi_github_access_token' );
 
@@ -56,10 +69,11 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 	}
 
 	/**
-	 * Get New Version from github
+	 * Fetch the latest version number from the GitHub repo. Does this by fetching the plugin
+	 * file and then parsing the header to get the version number.
 	 *
-	 * @since 1.0
-	 * @return false|string New version number
+	 * @author John Blackbourn
+	 * @return string|false Version number, or false on failure.
 	 */
 	public function fetch_new_version() {
 
@@ -81,12 +95,25 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 
 	}
 
+	/**
+	 * Returns the URL of the plugin's homepage.
+	 *
+	 * @author John Blackbourn
+	 * @return string URL of the plugin's homepage.
+	 */
 	function get_plugin_url() {
 
 		return $this->config['github_url'];
 
 	}
 
+	/**
+	 * Returns the URL of the plugin file on GitHub, with access token appended if relevant.
+	 *
+	 * @author John Blackbourn
+	 * @param  string $file Optional file name. Defaults to base plugin file.
+	 * @return string URL of the plugin file.
+	 */
 	function get_file_url( $file = null ) {
 
 		if ( empty( $file ) )
@@ -103,6 +130,12 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 		return $url;
 	}
 
+	/**
+	 * Returns the URL of the plugin's ZIP package on GitHub, with access token appended if relevant.
+	 *
+	 * @author John Blackbourn
+	 * @return string URL of the plugin's ZIP package.
+	 */
 	function get_package_url() {
 
 		$url = $this->config['zip_url'];
@@ -118,9 +151,11 @@ class EUAPI_Handler_Github extends EUAPI_Handler {
 	}
 
 	/**
-	 * @return WP_Error|EUAPI_info
+	 * Fetch info about the latest version of the item.
+	 *
+	 * @author John Blackbourn
+	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
 	 */
-
 	function fetch_info() {
 
 		$fields = array(

@@ -1,5 +1,12 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
+if ( ! class_exists( 'EUAPI_Item' ) ) :
+
+/**
+ * Abstract EUAPI Item class upon which to build a plugin item or theme item.
+ */
 abstract class EUAPI_Item {
 
 	function get_version() {
@@ -11,3 +18,5 @@ abstract class EUAPI_Item {
 	}
 
 }
+
+endif;

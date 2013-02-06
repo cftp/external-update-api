@@ -4,10 +4,18 @@ defined( 'ABSPATH' ) or die();
 
 if ( ! class_exists( 'EUAPI' ) ) :
 
+/**
+ * Main instance of the EUAPI plugin.
+ */
 class EUAPI {
 
 	var $handlers = array();
 
+	/**
+	 * Class constructor. Sets up some actions and filters.
+	 *
+	 * @author John Blackbourn
+	 */
 	public function __construct() {
 
 		add_filter( 'http_request_args',                     array( $this, 'http_request_args' ), 20, 2 );
@@ -23,6 +31,15 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Filter the arguments for HTTP requests. If the request is to a URL that's part of
+	 * something we're handling then filter the arguments accordingly.
+	 *
+	 * @author John Blackbourn
+	 * @param  array  $args HTTP request arguments.
+	 * @param  string $url  HTTP request URL.
+	 * @return array        Updated array of arguments.
+	 */
 	function http_request_args( array $args, $url ) {
 
 		if ( 0 === strpos( $url, 'http://api.wordpress.org/plugins/update-check/' ) )
@@ -51,6 +68,16 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Filters the arguments for HTTP requests to the plugin update check API.
+	 *
+	 * Here we loop over each plugin in the update check request and removes ones which we're
+	 * handling updates for.
+	 *
+	 * @author John Blackbourn
+	 * @param  array $args HTTP request arguments.
+	 * @return array       Updated array of arguments.
+	 */
 	function plugin_request( array $args ) {
 
 		$plugins = unserialize( $args['body']['plugins'] );
@@ -72,6 +99,16 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Filters the arguments for HTTP requests to the theme update check API.
+	 *
+	 * Here we loop over each theme in the update check request and removes ones which we're
+	 * handling updates for.
+	 *
+	 * @author John Blackbourn
+	 * @param  array $args HTTP request arguments.
+	 * @return array       Updated array of arguments.
+	 */
 	function theme_request( array $args ) {
 
 		$themes = unserialize( $args['body']['themes'] );
@@ -100,22 +137,51 @@ class EUAPI {
 
 	}
 
-	function check_plugins( $transient ) {
+	/**
+	 * Called immediately before the plugin update check results are saved in a transient.
+	 *
+	 * We use this to fire off update checks to each of the plugins we're handling updates
+	 * for and populate the results in the update check object.
+	 *
+	 * @author John Blackbourn
+	 * @param  object $update The plugin update check object.
+	 * @return object         The updated update check object.
+	 */
+	function check_plugins( $update ) {
 		if ( !isset( $this->handlers['plugin'] ) )
-			return $transient;
-		return $this->check( $transient, $this->handlers['plugin'] );
+			return $update;
+		return $this->check( $update, $this->handlers['plugin'] );
 	}
 
-	function check_themes( $transient ) {
+	/**
+	 * Called immediately before the theme update check results are saved in a transient.
+	 *
+	 * We use this to fire off update checks to each of the themes we're handling updates
+	 * for and populate the results in the update check object.
+	 *
+	 * @author John Blackbourn
+	 * @param  object $update Theme update check object.
+	 * @return object         Updated update check object.
+	 */
+	function check_themes( $update ) {
 		if ( !isset( $this->handlers['theme'] ) )
-			return $transient;
-		return $this->check( $transient, $this->handlers['theme'] );
+			return $update;
+		return $this->check( $update, $this->handlers['theme'] );
 	}
 
-	public function check( $transient, array $handlers ) {
+	/**
+	 * Fire off update checks for each of the handlers specified and populate the results in
+	 * the update check object.
+	 *
+	 * @author John Blackbourn
+	 * @param  object $update   Update check object.
+	 * @param  array  $handlers Handlers that we're interested in.
+	 * @return object           Updated update check object.
+	 */
+	public function check( $update, array $handlers ) {
 
-		if ( empty( $transient->checked ) )
-			return $transient;
+		if ( empty( $update->checked ) )
+			return $update;
 
 		foreach ( $handlers as $handler ) {
 
@@ -123,17 +189,26 @@ class EUAPI {
 
 			if ( $update->get_new_version() and version_compare( $update->get_new_version(), $handler->get_current_version() ) ) {
 				if ( 'plugin' == $handler->get_type() )
-					$transient->response[ $handler->get_file() ] = (object) $update->get_data_to_store();
+					$update->response[ $handler->get_file() ] = (object) $update->get_data_to_store();
 				else
-					$transient->response[ $handler->get_file() ] = $update->get_data_to_store();
+					$update->response[ $handler->get_file() ] = $update->get_data_to_store();
 			}
 
 		}
 
-		return $transient;
+		return $update;
 
 	}
 
+	/**
+	 * Get the update handler for the given item, if one is present.
+	 *
+	 * @author John Blackbourn
+	 * @param  string             $type Handler type (either 'plugin' or 'theme').
+	 * @param  string             $file Item base file name.
+	 * @param  EUAPI_Item|null    $item Item object for the plugin/theme. Optional.
+	 * @return EUAPI_Handler|null       Update handler object, or null if no update handler is present.
+	 */
 	function get_handler( $type, $file, $item = null ) {
 
 		if ( isset( $this->handlers[$type][$file] ) )
@@ -154,6 +229,15 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Returns the item data for a given item, typically by reading the item file header
+	 * and populating its data.
+	 *
+	 * @author John Blackbourn
+	 * @param  string          $type Handler type (either 'plugin' or 'theme').
+	 * @param  string          $file Item base file name.
+	 * @return EUAPI_Item|null       Item object or null on failure.
+	 */
 	function populate_item( $type, $file ) {
 
 		switch ( $type ) {
@@ -175,10 +259,10 @@ class EUAPI {
 	}
 
 	/**
-	 * Get Plugin data
+	 * Get data for a plugin by reading its file header.
 	 *
-	 * @since 1.0
-	 * @return object $data the data
+	 * @param  string      $file Plugin base file name.
+	 * @return array|false       Array of plugin data, or false on failure.
 	 */
 	public function get_plugin_data( $file ) {
 
@@ -191,6 +275,12 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Get data for a theme by reading its file header.
+	 *
+	 * @param  string      $file Theme directory name.
+	 * @return array|false       Array of theme data, or false on failure.
+	 */
 	function get_theme_data( $file ) {
 
 		$theme = wp_get_theme( $file );
@@ -220,38 +310,50 @@ class EUAPI {
 	}
 
 	/**
-	 * Get Plugin info
+	 * When the Plugin API performs an action, this callback is fired, allowing us to override the API method
+	 * for a given action.
 	 *
-	 * @since 1.0
-	 * @param bool $false always false
-	 * @param string $action the API function being performed
-	 * @param object $args plugin arguments
-	 * @return bool|WP_Error|EUAPI_Info 
+	 * Here, we override the action which fetches plugin information from the wp.org API
+	 * and return our own plugin information if necessary.
+	 *
+	 * @param  bool|object              $default Default return value for this request. Usually boolean false.
+	 * @param  string                   $action  API function being performed.
+	 * @param  object                   $plugin  Plugin Info API object.
+	 * @return bool|WP_Error|EUAPI_Info          EUAPI Info object, WP_Error object on failure, $default if we're not interfering.
 	 */
-	public function get_plugin_info( $false, $action, $response ) {
+	public function get_plugin_info( $default, $action, $plugin ) {
 
 		if ( 'plugin_information' != $action )
-			return $false;
-		if ( false === strpos( $response->slug, '/' ) )
-			return $false;
+			return $default;
+		if ( false === strpos( $plugin->slug, '/' ) )
+			return $default;
 
-		if ( !( $handler = $this->get_handler( 'plugin', $response->slug ) ) )
-			return $false;
+		if ( !( $handler = $this->get_handler( 'plugin', $plugin->slug ) ) )
+			return $default;
 
 		return $handler->get_info();
 
 	}
 
 	/**
-	 * @return bool|WP_Error|EUAPI_Info 
+	 * When the Theme API performs an action, this callback is fired, allowing us to override the API method
+	 * for a given action.
+	 *
+	 * Here, we override the action which fetches theme information from the wp.org API
+	 * and return our own theme information if necessary.
+	 *
+	 * @param  bool|object              $default Default return value for this request. Usually boolean false.
+	 * @param  string                   $action  API function being performed.
+	 * @param  object                   $theme   Theme Info API object.
+	 * @return bool|WP_Error|EUAPI_Info          EUAPI Info object, WP_Error object on failure, $default if we're not interfering.
 	 */
-	public function get_theme_info( $false, $action, $response ) {
+	public function get_theme_info( $default, $action, $theme ) {
 
 		if ( 'theme_information' != $action )
-			return $false;
+			return $default;
 
-		if ( !( $handler = $this->get_handler( 'theme', $response->slug ) ) )
-			return $false;
+		if ( !( $handler = $this->get_handler( 'theme', $theme->slug ) ) )
+			return $default;
 
 		return $handler->get_info();
 

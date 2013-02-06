@@ -1,5 +1,12 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
+if ( ! class_exists( 'EUAPI_Update' ) ) :
+
+/**
+ * EUAPI update item. Contains information about an available update.
+ */
 class EUAPI_Update {
 
 	function __construct( array $args ) {
@@ -21,3 +28,5 @@ class EUAPI_Update {
 	}
 
 }
+
+endif;

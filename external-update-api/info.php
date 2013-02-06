@@ -1,5 +1,12 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
+if ( ! class_exists( 'EUAPI_Info' ) ) :
+
+/**
+ * EUAPI Info class.
+ */
 class EUAPI_Info {
 
 	function __construct( array $args ) {
@@ -10,3 +17,5 @@ class EUAPI_Info {
 	}
 
 }
+
+endif;

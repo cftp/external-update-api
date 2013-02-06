@@ -26,7 +26,7 @@ GNU General Public License for more details.
 defined( 'ABSPATH' ) or die();
 
 /**
- * Autoloader
+ * Class autoloader
  *
  * @author John Blackbourn
  * @param  string $class Class name
@@ -51,6 +51,12 @@ function euapi_autoloader( $class ) {
 
 }
 
+/**
+ * Flush the site's plugin and theme update transients. Fired on activation and deactivation.
+ *
+ * @author John Blackbourn
+ * @return null
+ */
 function euapi_flush_transients() {
 	delete_site_transient( 'update_plugins' );
 	delete_site_transient( 'update_themes' );

@@ -1,5 +1,13 @@
 <?php
 
+defined( 'ABSPATH' ) or die();
+
+if ( ! class_exists( 'EUAPI_Item_Plugin' ) ) :
+
+/**
+ * EUAPI plugin item. A simple container for plugin information, usually fetched priorly via
+ * file headers or an external source.
+ */
 class EUAPI_Item_Plugin extends EUAPI_Item {
 
 	var $type = 'plugin';
@@ -14,3 +22,5 @@ class EUAPI_Item_Plugin extends EUAPI_Item {
 	}
 
 }
+
+endif;
