@@ -21,7 +21,7 @@ Add support for updating themes and plugins via external sources instead of the 
 
 = Usage =
 
-The plugin comes bunbled with an update handler for GitHub. To add a handler for a different external source, see the 'Writing a new Handler' section below.
+The plugin comes bundled with an update handler for GitHub. To add a handler for a different external source, see the 'Writing a new Handler' section below.
 
 You can tell the update API to use a public or private GitHub repo to update a plugin or theme on your site. To do this, hook into the `euapi_plugin_handler` or 'euapi_theme_handler' hook, respectively, and return a handler for your plugin or theme.
 
