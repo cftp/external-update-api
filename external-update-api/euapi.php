@@ -84,12 +84,19 @@ class EUAPI {
 
 		foreach ( $plugins->plugins as $plugin => $data ) {
 
-			$item = new EUAPI_Item_Plugin( $plugin, $data );
+			if ( !is_array( $data ) )
+				continue;
 
-			if ( $handler = $this->get_handler( 'plugin', $plugin, $item ) ) {
+			$item    = new EUAPI_Item_Plugin( $plugin, $data );
+			$handler = $this->get_handler( 'plugin', $plugin, $item );
+
+			if ( is_null( $handler ) )
+				continue;
+
+			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
 				$handler->item = $item;
-				unset( $plugins->plugins[$plugin] );
-			}
+
+			unset( $plugins->plugins[$plugin] );
 
 		}
 
@@ -119,15 +126,18 @@ class EUAPI {
 				continue;
 
 			# ThemeURI is missing from $data by default for some reason
-			$theme_obj = wp_get_theme( $data['Template'] );
-			$data['ThemeURI'] = $theme_obj->get( 'ThemeURI' );
+			$data['ThemeURI'] = wp_get_theme( $data['Template'] )->get( 'ThemeURI' );
 
-			$item = new EUAPI_Item_Theme( $theme, $data );
+			$item    = new EUAPI_Item_Theme( $theme, $data );
+			$handler = $this->get_handler( 'theme', $theme, $item );
 
-			if ( $handler = $this->get_handler( 'theme', $theme, $item ) ) {
+			if ( is_null( $handler ) )
+				continue;
+
+			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
 				$handler->item = $item;
-				unset( $themes[$theme] );
-			}
+
+			unset( $themes[$theme] );
 
 		}
 
@@ -211,19 +221,18 @@ class EUAPI {
 	 */
 	function get_handler( $type, $file, $item = null ) {
 
-		if ( isset( $this->handlers[$type][$file] ) )
+		if ( isset( $this->handlers[$type] ) and array_key_exists( $file, $this->handlers[$type] ) )
 			return $this->handlers[$type][$file];
 
 		if ( !$item )
 			$item = $this->populate_item( $type, $file );
 
 		if ( !$item )
-			return null;
+			$handler = null;
+		else
+			$handler = apply_filters( "euapi_{$type}_handler", null, $item );
 
-		$handler = apply_filters( "euapi_{$type}_handler", null, $item );
-
-		if ( is_a( $handler, 'EUAPI_Handler' ) )
-			$this->handlers[$type][$file] = $handler;
+		$this->handlers[$type][$file] = $handler;
 
 		return $handler;
 
@@ -243,12 +252,12 @@ class EUAPI {
 		switch ( $type ) {
 
 			case 'plugin':
-				if ( $data = $this->get_plugin_data( $file ) )
+				if ( $data = self::get_plugin_data( $file ) )
 					return new EUAPI_Item_Plugin( $file, $data );
 				break;
 
 			case 'theme':
-				if ( $data = $this->get_theme_data( $file ) )
+				if ( $data = self::get_theme_data( $file ) )
 					return new EUAPI_Item_Theme( $file, $data );
 				break;
 
