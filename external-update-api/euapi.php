@@ -195,13 +195,13 @@ class EUAPI {
 
 		foreach ( array_filter( $handlers ) as $handler ) {
 
-			$update = $handler->get_update();
+			$handler_update = $handler->get_update();
 
-			if ( $update->get_new_version() and 1 === version_compare( $update->get_new_version(), $handler->get_current_version() ) ) {
+			if ( $handler_update->get_new_version() and 1 === version_compare( $handler_update->get_new_version(), $handler->get_current_version() ) ) {
 				if ( 'plugin' == $handler->get_type() )
-					$update->response[ $handler->get_file() ] = (object) $update->get_data_to_store();
+					$update->response[ $handler->get_file() ] = (object) $handler_update->get_data_to_store();
 				else
-					$update->response[ $handler->get_file() ] = $update->get_data_to_store();
+					$update->response[ $handler->get_file() ] = $handler_update->get_data_to_store();
 			}
 
 		}
