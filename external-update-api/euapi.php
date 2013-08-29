@@ -71,8 +71,8 @@ class EUAPI {
 	/**
 	 * Filters the arguments for HTTP requests to the plugin update check API.
 	 *
-	 * Here we loop over each plugin in the update check request and removes ones which we're
-	 * handling updates for.
+	 * Here we loop over each plugin in the update check request and remove ones for which we're
+	 * handling or excluding updates.
 	 *
 	 * @author John Blackbourn
 	 * @param  array $args HTTP request arguments.
@@ -109,8 +109,8 @@ class EUAPI {
 	/**
 	 * Filters the arguments for HTTP requests to the theme update check API.
 	 *
-	 * Here we loop over each theme in the update check request and removes ones which we're
-	 * handling updates for.
+	 * Here we loop over each theme in the update check request and remove ones for which we're
+	 * handling or excluding updates.
 	 *
 	 * @author John Blackbourn
 	 * @param  array $args HTTP request arguments.
@@ -151,7 +151,7 @@ class EUAPI {
 	 * Called immediately before the plugin update check results are saved in a transient.
 	 *
 	 * We use this to fire off update checks to each of the plugins we're handling updates
-	 * for and populate the results in the update check object.
+	 * for, and populate the results in the update check object.
 	 *
 	 * @author John Blackbourn
 	 * @param  object $update The plugin update check object.
@@ -167,7 +167,7 @@ class EUAPI {
 	 * Called immediately before the theme update check results are saved in a transient.
 	 *
 	 * We use this to fire off update checks to each of the themes we're handling updates
-	 * for and populate the results in the update check object.
+	 * for, and populate the results in the update check object.
 	 *
 	 * @author John Blackbourn
 	 * @param  object $update Theme update check object.

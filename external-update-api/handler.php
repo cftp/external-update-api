@@ -28,7 +28,7 @@ abstract class EUAPI_Handler {
 	 * @abstract
 	 * @return string URL of the item's homepage.
 	 */
-	abstract public function get_plugin_url();
+	abstract public function get_item_url();
 
 	/**
 	 * Return the URL of the item's ZIP package.
@@ -113,7 +113,7 @@ abstract class EUAPI_Handler {
 		return $this->update = new EUAPI_Update( array(
 			'slug'        => $this->get_file(),
 			'new_version' => $this->get_new_version(),
-			'url'         => $this->get_plugin_url(),
+			'url'         => $this->get_homepage_url(),
 			'package'     => $package,
 			'config'      => $this->get_config(),
 		) );

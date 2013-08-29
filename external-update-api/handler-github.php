@@ -80,22 +80,22 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	}
 
 	/**
-	 * Returns the URL of the plugin's homepage.
+	 * Returns the URL of the plugin or theme's homepage.
 	 *
 	 * @author John Blackbourn
-	 * @return string URL of the plugin's homepage.
+	 * @return string URL of the plugin or theme's homepage.
 	 */
-	function get_plugin_url() {
+	function get_homepage_url() {
 
 		return $this->config['github_url'];
 
 	}
 
 	/**
-	 * Returns the URL of the plugin file on GitHub, with access token appended if relevant.
+	 * Returns the URL of the plugin or theme file on GitHub, with access token appended if relevant.
 	 *
 	 * @author John Blackbourn
-	 * @param  string $file Optional file name. Defaults to base plugin file.
+	 * @param  string $file Optional file name. Defaults to base plugin file or theme stylesheet.
 	 * @return string URL of the plugin file.
 	 */
 	function get_file_url( $file = null ) {
@@ -115,10 +115,10 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	}
 
 	/**
-	 * Returns the URL of the plugin's ZIP package on GitHub, with access token appended if relevant.
+	 * Returns the URL of the plugin or theme's ZIP package on GitHub, with access token appended if relevant.
 	 *
 	 * @author John Blackbourn
-	 * @return string URL of the plugin's ZIP package.
+	 * @return string URL of the plugin or theme's ZIP package.
 	 */
 	function get_package_url() {
 
@@ -175,7 +175,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 
 			'slug'          => $this->get_file(),
 			'version'       => $this->get_new_version(),
-			'homepage'      => $this->get_plugin_url(),
+			'homepage'      => $this->get_homepage_url(),
 			'download_link' => $this->get_package_url(),
 	#		'requires'      => '',
 	#		'tested'        => '',
