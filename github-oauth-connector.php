@@ -2,7 +2,7 @@
 /*
 Plugin Name:  GitHub OAuth Connector
 Description:  Provides an interface for fetching and storing an OAuth access token from a GitHub application.
-Version:      1.6.1
+Version:      1.6.2
 Author:       Code for the People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  github-oauth-connector
@@ -298,6 +298,10 @@ class GitHub_OAuth_Connector {
 				$gh['access_token'] = $access_token;
 				update_option( 'euapi_github_access_token', $access_token );
 				update_option('ghupdate', $gh );
+
+				if ( function_exists( 'euapi_flush_transients' ) )
+					euapi_flush_transients();
+
 				$query = add_query_arg( array(
 					'page'       => 'github-oauth-connector',
 					'authorised' => 'true'

@@ -193,7 +193,7 @@ class EUAPI {
 		if ( empty( $update->checked ) )
 			return $update;
 
-		foreach ( $handlers as $handler ) {
+		foreach ( array_filter( $handlers ) as $handler ) {
 
 			$update = $handler->get_update();
 
