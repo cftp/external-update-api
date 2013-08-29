@@ -59,13 +59,17 @@ None yet.
 
 ## Upgrade Notice ##
 
-### 0.3.1 ###
+### 0.3.2 ###
 
 * Allow a handler to return boolean false to prevent update checks being performed altogether.
 * Prevent false positives when reporting available updates.
 * Prevent multiple simultaneous updates breaking due to a variable name clash.
 
 ## Changelog ##
+
+### 0.3.2 ###
+
+* Change a method name and inline docs to clarify that both plugins and themes are supported.
 
 ### 0.3.1 ###
 
