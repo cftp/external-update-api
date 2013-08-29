@@ -2,7 +2,7 @@
 /*
 Plugin Name: CFTP Updater
 Description: Get updates to CFTP code from GitHub
-Version:     1.0.1
+Version:     1.0.2
 Author:      Code for the People
 Author URI:  http://codeforthepeople.com/
 
@@ -40,7 +40,7 @@ function cftp_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) 
 
 	$url = untrailingslashit( $item->url );
 
-	if ( preg_match( '#^https://github\.com/(cftp|imsimond|johnbillion|simonwheatley)/#', $url ) ) {
+	if ( preg_match( '#^https://github\.com/(cftp|imsimond|johnbillion|simonwheatley|scottsweb)/#', $url ) ) {
 
 		$handler = new EUAPI_Handler_GitHub( array(
 			'type'         => $item->type,
