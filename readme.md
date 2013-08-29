@@ -1,11 +1,11 @@
 # External Update API #
 
-**Contributors:** codeforthepeople, johnbillion
-**Tags:** updates, github
-**Requires at least:** 3.4
-**Tested up to:** 3.6
-**Stable tag:** trunk
-**License:** GPL v2 or later
+**Contributors:** codeforthepeople, johnbillion  
+**Tags:** updates, github  
+**Requires at least:** 3.4  
+**Tested up to:** 3.6  
+**Stable tag:** trunk  
+**License:** GPL v2 or later  
 
 Add support for updating themes and plugins via external sources. Includes an update handler for plugins and themes hosted on GitHub.
 
@@ -27,8 +27,7 @@ You can tell the update API to use a public or private GitHub repo to update a p
 
 Example:
 
-`
-function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
+`function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 
 	if ( 'my-plugin/my-plugin.php' == $item->file ) {
 
