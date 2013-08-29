@@ -59,7 +59,9 @@ function cftp_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) 
 add_filter( 'euapi_plugin_handler', 'cftp_update_handler', 9, 2 );
 add_filter( 'euapi_theme_handler',  'cftp_update_handler', 9, 2 );
 
-if ( function_exists( 'euapi_flush_transients' ) ) {
-	register_activation_hook( __FILE__,   'euapi_flush_transients' );
-	register_deactivation_hook( __FILE__, 'euapi_flush_transients' );
-}
+add_action( 'plugins_loaded', function() {
+	if ( function_exists( 'euapi_flush_transients' ) ) {
+		register_activation_hook( __FILE__,   'euapi_flush_transients' );
+		register_deactivation_hook( __FILE__, 'euapi_flush_transients' );
+	}
+} );
