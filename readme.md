@@ -27,7 +27,8 @@ You can tell the update API to use a public or private GitHub repo to update a p
 
 Example:
 
-`function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
+```
+function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 
 	if ( 'my-plugin/my-plugin.php' == $item->file ) {
 
@@ -44,7 +45,7 @@ Example:
 
 }
 add_filter( 'euapi_plugin_handler', 'my_update_handler', 10, 2 );
-`
+```
 
 ### Writing a new Handler ###
 
