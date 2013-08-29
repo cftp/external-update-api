@@ -16,7 +16,10 @@ abstract class EUAPI_Handler {
 	 * @return void
 	 */
 	public function __construct( array $config = array() ) {
-		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", $config );
+		$defaults = array(
+			'timeout' => 5,
+		);
+		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", array_merge( $defaults, $config ) );
 	}
 
 	/**

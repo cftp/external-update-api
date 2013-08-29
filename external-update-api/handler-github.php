@@ -61,7 +61,8 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	public function fetch_new_version() {
 
 		$response = EUAPI::fetch( $this->get_file_url(), array(
-			'sslverify' => $this->config['sslverify']
+			'sslverify' => $this->config['sslverify'],
+			'timeout'   => $this->config['timeout'],
 		) );
 
 		if ( is_wp_error( $response ) )
@@ -161,7 +162,8 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 		}
 
 		$response = EUAPI::fetch( $file, array(
-			'sslverify' => $this->config['sslverify']
+			'sslverify' => $this->config['sslverify'],
+			'timeout'   => $this->config['timeout'],
 		) );
 
 		if ( is_wp_error( $response ) )
