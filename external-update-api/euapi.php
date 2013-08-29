@@ -273,7 +273,7 @@ class EUAPI {
 	 * @param  string      $file Plugin base file name.
 	 * @return array|false       Array of plugin data, or false on failure.
 	 */
-	public function get_plugin_data( $file ) {
+	public static function get_plugin_data( $file ) {
 
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 
@@ -290,7 +290,7 @@ class EUAPI {
 	 * @param  string      $file Theme directory name.
 	 * @return array|false       Array of theme data, or false on failure.
 	 */
-	function get_theme_data( $file ) {
+	public static function get_theme_data( $file ) {
 
 		$theme = wp_get_theme( $file );
 
@@ -376,7 +376,7 @@ class EUAPI {
 	 * @param  array    $args  Array of arguments passed to wp_remote_get().
 	 * @return WP_Error|string WP_Error object on failure, string contents of file on success.
 	 */
-	function fetch( $url, array $args = array() ) {
+	public static function fetch( $url, array $args = null ) {
 
 		$args = wp_parse_args( $args, array(
 			'timeout' => 5
@@ -398,7 +398,7 @@ class EUAPI {
 
 	}
 
-	function get_content_data( $content, array $all_headers ) {
+	public static function get_content_data( $content, array $all_headers ) {
 
 		# @see WordPress' get_file_data()
 
