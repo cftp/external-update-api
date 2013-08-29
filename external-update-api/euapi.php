@@ -197,7 +197,7 @@ class EUAPI {
 
 			$update = $handler->get_update();
 
-			if ( $update->get_new_version() and version_compare( $update->get_new_version(), $handler->get_current_version() ) ) {
+			if ( $update->get_new_version() and 1 === version_compare( $update->get_new_version(), $handler->get_current_version() ) ) {
 				if ( 'plugin' == $handler->get_type() )
 					$update->response[ $handler->get_file() ] = (object) $update->get_data_to_store();
 				else
