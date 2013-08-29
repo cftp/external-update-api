@@ -93,7 +93,7 @@ class EUAPI {
 			if ( is_null( $handler ) )
 				continue;
 
-			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
+			if ( is_a( $handler, 'EUAPI_Handler' ) )
 				$handler->item = $item;
 
 			unset( $plugins->plugins[$plugin] );
@@ -134,7 +134,7 @@ class EUAPI {
 			if ( is_null( $handler ) )
 				continue;
 
-			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
+			if ( is_a( $handler, 'EUAPI_Handler' ) )
 				$handler->item = $item;
 
 			unset( $themes[$theme] );
