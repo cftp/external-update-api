@@ -23,7 +23,7 @@ Add support for updating themes and plugins via external sources instead of the 
 
 The plugin comes bundled with an update handler for GitHub. To add a handler for a different external source, see the 'Writing a new Handler' section below.
 
-You can tell the update API to use a public or private GitHub repo to update a plugin or theme on your site. To do this, hook into the `euapi_plugin_handler` or 'euapi_theme_handler' hook, respectively, and return a handler for your plugin or theme.
+You can tell the update API to use a public or private GitHub repo to update a plugin or theme on your site. To do this, hook into the `euapi_plugin_handler` or `euapi_theme_handler` hook, respectively, and return a handler for your plugin or theme.
 
 Example:
 
@@ -46,6 +46,8 @@ function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 }
 add_filter( 'euapi_plugin_handler', 'my_update_handler', 10, 2 );
 ```
+
+If your repo is private then you'll need to pass in an additional `access_token` parameter that contains your oAuth access token.
 
 ### Writing a new Handler ###
 
