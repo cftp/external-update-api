@@ -67,6 +67,10 @@ None yet.
 
 ## Changelog ##
 
+### Friday 30 August 2013 ###
+
+* Add a plugin to enable updated from Automattic GitHub repos
+
 ### 0.3.2 ###
 
 * Change a method name and inline docs to clarify that both plugins and themes are supported.
