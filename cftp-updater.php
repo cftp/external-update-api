@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: CFTP Updater
-Description: Get updates to CFTP code from GitHub
+Description: Get updates to CFTP code from GitHub using the External Update API
 Version:     1.0.2
 Author:      Code for the People
 Author URI:  http://codeforthepeople.com/
