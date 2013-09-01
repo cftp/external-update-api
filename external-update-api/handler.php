@@ -28,7 +28,7 @@ abstract class EUAPI_Handler {
 	 * @abstract
 	 * @return string URL of the item's homepage.
 	 */
-	abstract public function get_item_url();
+	abstract public function get_homepage_url();
 
 	/**
 	 * Return the URL of the item's ZIP package.
