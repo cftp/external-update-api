@@ -42,10 +42,10 @@ class EUAPI {
 	 */
 	function http_request_args( array $args, $url ) {
 
-		if ( 0 === strpos( $url, 'http://api.wordpress.org/plugins/update-check/' ) )
+		if ( false !== strpos( $url, '://api.wordpress.org/plugins/update-check/' ) )
 			return $this->plugin_request( $args );
 
-		if ( 0 === strpos( $url, 'http://api.wordpress.org/themes/update-check/' ) )
+		if ( false !== strpos( $url, '://api.wordpress.org/themes/update-check/' ) )
 			return $this->theme_request( $args );
 
 		$query = parse_url( $url, PHP_URL_QUERY );
