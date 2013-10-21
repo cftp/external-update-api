@@ -49,6 +49,8 @@ add_filter( 'euapi_plugin_handler', 'my_update_handler', 10, 2 );
 
 If your repo is private then you'll need to pass in an additional `access_token` parameter that contains your oAuth access token.
 
+You can see example handlers in our [CFTP Updater repo](https://github.com/cftp/cftp-updater).
+
 ### Writing a new Handler ###
 
 To write a new handler, your best bet is to copy the `EUAPI_Handler_GitHub` class included in the plugin and go from there. See the `EUAPI_Handler` class for the abstract methods which must be defined in your class.
