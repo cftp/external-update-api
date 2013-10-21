@@ -80,7 +80,17 @@ class EUAPI {
 	 */
 	function plugin_request( array $args ) {
 
-		$plugins = unserialize( $args['body']['plugins'] );
+		$json    = true;
+		$plugins = json_decode( $args['body']['plugins'] );
+
+		# WordPress prior to 3.7 used serialization instead of JSON encoding:
+		if ( is_null( $plugins ) ) {
+			$json    = false;
+			$plugins = unserialize( $args['body']['plugins'] );
+		}
+
+		if ( empty( $plugins ) )
+			return $args;
 
 		foreach ( $plugins->plugins as $plugin => $data ) {
 
@@ -100,7 +110,10 @@ class EUAPI {
 
 		}
 
-		$args['body']['plugins'] = serialize( $plugins );
+		if ( $json )
+			$args['body']['plugins'] = json_encode( $plugins );
+		else
+			$args['body']['plugins'] = serialize( $plugins );
 
 		return $args;
 
@@ -118,7 +131,17 @@ class EUAPI {
 	 */
 	function theme_request( array $args ) {
 
-		$themes = unserialize( $args['body']['themes'] );
+		$json   = true;
+		$themes = json_decode( $args['body']['themes'] );
+
+		# WordPress prior to 3.7 used serialization instead of JSON encoding:
+		if ( is_null( $themes ) ) {
+			$json   = false;
+			$themes = unserialize( $args['body']['themes'] );
+		}
+
+		if ( empty( $themes ) )
+			return $args;
 
 		foreach ( $themes as $theme => $data ) {
 
@@ -141,7 +164,10 @@ class EUAPI {
 
 		}
 
-		$args['body']['themes'] = serialize( $themes );
+		if ( $json )
+			$args['body']['themes'] = json_encode( $themes );
+		else
+			$args['body']['themes'] = serialize( $themes );
 
 		return $args;
 
