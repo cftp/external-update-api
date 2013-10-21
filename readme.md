@@ -7,7 +7,7 @@
 **Stable tag:** 0.3.5  
 **License:** GPL v2 or later  
 
-Add support for updating themes and plugins via external sources. Includes an update handler for plugins and themes hosted on GitHub.
+Add support for updating themes and plugins via external sources. Includes an update handler for plugins and themes hosted in public or private repos on GitHub.
 
 ## Description ##
 
