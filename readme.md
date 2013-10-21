@@ -3,8 +3,8 @@
 **Contributors:** codeforthepeople, johnbillion  
 **Tags:** updates, github  
 **Requires at least:** 3.4  
-**Tested up to:** 3.6  
-**Stable tag:** trunk  
+**Tested up to:** 3.7  
+**Stable tag:** 0.3.5  
 **License:** GPL v2 or later  
 
 Add support for updating themes and plugins via external sources. Includes an update handler for plugins and themes hosted on GitHub.
@@ -59,17 +59,23 @@ None yet.
 
 ## Upgrade Notice ##
 
-### 0.3.2 ###
+### 0.3.5 ###
 
-* Allow a handler to return boolean false to prevent update checks being performed altogether.
-* Prevent false positives when reporting available updates.
-* Prevent multiple simultaneous updates breaking due to a variable name clash.
+* Support JSON-encoded SSL API requests to api.wordpress.org. This is pre-emptive support for WordPress 3.7.
 
 ## Changelog ##
 
-### Friday 30 August 2013 ###
+### 0.3.5 ###
 
-* Add a plugin to enable updated from Automattic GitHub repos
+* Support JSON-encoded API requests in addition to serialisation. This is pre-emptive support for WordPress 3.7.
+
+### 0.3.4 ###
+
+* Support the upcoming SSL communication with api.wordpress.org
+
+### 0.3.3 ###
+
+* Correct a method name in the EUAPI_Handler` class.
 
 ### 0.3.2 ###
 
