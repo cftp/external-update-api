@@ -9,7 +9,7 @@ if ( ! class_exists( 'EUAPI' ) ) :
  */
 class EUAPI {
 
-	var $handlers = array();
+	protected $handlers = array();
 
 	/**
 	 * Class constructor. Sets up some actions and filters.
@@ -18,16 +18,16 @@ class EUAPI {
 	 */
 	public function __construct() {
 
-		add_filter( 'http_request_args',                     array( $this, 'http_request_args' ), 20, 2 );
+		add_filter( 'http_request_args',                     array( $this, 'filter_http_request_args' ), 20, 2 );
 
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_plugins' ) );
-		add_filter( 'pre_set_site_transient_update_themes',  array( $this, 'check_themes' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'filter_update_plugins' ) );
+		add_filter( 'pre_set_site_transient_update_themes',  array( $this, 'filter_update_themes' ) );
 
-		add_filter( 'plugins_api',                           array( $this, 'get_plugin_info' ), 10, 3 );
-		add_filter( 'themes_api',                            array( $this, 'get_theme_info' ), 10, 3 );
+		add_filter( 'plugins_api',                           array( $this, 'filter_plugins_api' ), 10, 3 );
+		add_filter( 'themes_api',                            array( $this, 'filter_themes_api' ), 10, 3 );
 
-		add_filter( 'upgrader_pre_install',                  array( $this, 'upgrader_pre_install' ), 10, 2 );
-		add_filter( 'upgrader_post_install',                 array( $this, 'upgrader_post_install' ), 10, 3 );
+		add_filter( 'upgrader_pre_install',                  array( $this, 'filter_upgrader_pre_install' ), 10, 2 );
+		add_filter( 'upgrader_post_install',                 array( $this, 'filter_upgrader_post_install' ), 10, 3 );
 
 	}
 
@@ -40,7 +40,7 @@ class EUAPI {
 	 * @param  string $url  HTTP request URL.
 	 * @return array        Updated array of arguments.
 	 */
-	function http_request_args( array $args, $url ) {
+	public function filter_http_request_args( array $args, $url ) {
 
 		if ( preg_match( '#://api\.wordpress\.org/(?P<type>plugins|themes)/update-check/(?P<version>[0-9.]+)/#', $url, $matches ) ) {
 
@@ -92,7 +92,7 @@ class EUAPI {
 	 * @param  float $version The API request version number.
 	 * @return array          Updated array of arguments.
 	 */
-	function plugin_request( array $args, $version ) {
+	protected function plugin_request( array $args, $version ) {
 
 		switch ( $version ) {
 
@@ -162,7 +162,7 @@ class EUAPI {
 	 * @param  float $version The API request version number.
 	 * @return array          Updated array of arguments.
 	 */
-	function theme_request( array $args, $version ) {
+	protected function theme_request( array $args, $version ) {
 
 		switch ( $version ) {
 
@@ -234,7 +234,7 @@ class EUAPI {
 	 * @param  object $update The plugin update check object.
 	 * @return object         The updated update check object.
 	 */
-	function check_plugins( $update ) {
+	public function filter_update_plugins( $update ) {
 		if ( !isset( $this->handlers['plugin'] ) ) {
 			return $update;
 		}
@@ -251,7 +251,7 @@ class EUAPI {
 	 * @param  object $update Theme update check object.
 	 * @return object         Updated update check object.
 	 */
-	function check_themes( $update ) {
+	public function filter_update_themes( $update ) {
 		if ( !isset( $this->handlers['theme'] ) ) {
 			return $update;
 		}
@@ -306,8 +306,9 @@ class EUAPI {
 			return $this->handlers[$type][$file];
 		}
 
-		if ( !$item )
-			$item = $this->populate_item( $type, $file );
+		if ( !$item ) {
+			$item = self::populate_item( $type, $file );
+		}
 
 		if ( !$item ) {
 			$handler = null;
@@ -330,7 +331,7 @@ class EUAPI {
 	 * @param  string          $file Item base file name.
 	 * @return EUAPI_Item|null       Item object or null on failure.
 	 */
-	function populate_item( $type, $file ) {
+	protected static function populate_item( $type, $file ) {
 
 		switch ( $type ) {
 
@@ -418,7 +419,7 @@ class EUAPI {
 	 * @param  object                   $plugin  Plugin Info API object.
 	 * @return bool|WP_Error|EUAPI_Info          EUAPI Info object, WP_Error object on failure, $default if we're not interfering.
 	 */
-	public function get_plugin_info( $default, $action, $plugin ) {
+	public function filter_plugins_api( $default, $action, $plugin ) {
 
 		if ( 'plugin_information' != $action ) {
 			return $default;
@@ -447,7 +448,7 @@ class EUAPI {
 	 * @param  object                   $theme   Theme Info API object.
 	 * @return bool|WP_Error|EUAPI_Info          EUAPI Info object, WP_Error object on failure, $default if we're not interfering.
 	 */
-	public function get_theme_info( $default, $action, $theme ) {
+	public function filter_themes_api( $default, $action, $theme ) {
 
 		if ( 'theme_information' != $action ) {
 			return $default;
@@ -517,7 +518,7 @@ class EUAPI {
 		return $all_headers;
 	}
 
-	public function upgrader_pre_install( $true, array $hook_extra ) {
+	public function filter_upgrader_pre_install( $true, array $hook_extra ) {
 
 		if ( isset( $hook_extra['plugin'] ) ) {
 			$this->get_handler( 'plugin', $hook_extra['plugin'] );
@@ -529,7 +530,7 @@ class EUAPI {
 
 	}
 
-	public function upgrader_post_install( $true, array $hook_extra, array $result ) {
+	public function filter_upgrader_post_install( $true, array $hook_extra, array $result ) {
 
 		global $wp_filesystem;
 

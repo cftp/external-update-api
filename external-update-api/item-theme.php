@@ -10,9 +10,9 @@ if ( ! class_exists( 'EUAPI_Item_Theme' ) ) :
  */
 class EUAPI_Item_Theme extends EUAPI_Item {
 
-	var $type = 'theme';
+	public $type = 'theme';
 
-	function __construct( $theme, array $data ) {
+	public function __construct( $theme, array $data ) {
 
 		$this->file    = $theme;
 		$this->url     = $data['ThemeURI'];

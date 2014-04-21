@@ -88,7 +88,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 * @author John Blackbourn
 	 * @return string URL of the plugin or theme's homepage.
 	 */
-	function get_homepage_url() {
+	public function get_homepage_url() {
 
 		return $this->config['github_url'];
 
@@ -101,7 +101,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 * @param  string $file Optional file name. Defaults to base plugin file or theme stylesheet.
 	 * @return string URL of the plugin file.
 	 */
-	function get_file_url( $file = null ) {
+	public function get_file_url( $file = null ) {
 
 		if ( empty( $file ) ) {
 			$file = $this->config['file_name'];
@@ -124,7 +124,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 * @author John Blackbourn
 	 * @return string URL of the plugin or theme's ZIP package.
 	 */
-	function get_package_url() {
+	public function get_package_url() {
 
 		$url = $this->config['zip_url'];
 
@@ -144,7 +144,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 * @author John Blackbourn
 	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
 	 */
-	function fetch_info() {
+	public function fetch_info() {
 
 		$fields = array(
 			'author'      => 'Author',
