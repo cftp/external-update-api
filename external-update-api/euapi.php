@@ -42,7 +42,7 @@ class EUAPI {
 	 */
 	public function filter_http_request_args( array $args, $url ) {
 
-		if ( preg_match( '#://api\.wordpress\.org/(?P<type>plugins|themes)/update-check/(?P<version>[0-9.]+)/#', $url, $matches ) ) {
+		if ( preg_match( '#://api\.wordpress\.org/(?P<type>plugins|themes)/update-check/(?P<version>[0-9\.]+)/#', $url, $matches ) ) {
 
 			switch ( $matches['type'] ) {
 
@@ -97,7 +97,8 @@ class EUAPI {
 		switch ( $version ) {
 
 			case 1.0:
-				$plugins = unserialize( $args['body']['plugins'] );
+				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Plugin API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
+				return $args;
 				break;
 
 			case 1.1:
@@ -116,6 +117,10 @@ class EUAPI {
 
 		foreach ( $plugins->plugins as $plugin => $data ) {
 
+			if ( is_object( $data ) ) {
+				$data = get_object_vars( $data );
+			}
+
 			if ( !is_array( $data ) ) {
 				continue;
 			}
@@ -131,21 +136,11 @@ class EUAPI {
 				$handler->item = $item;
 			}
 
-			unset( $plugins->plugins[$plugin] );
+			unset( $plugins->plugins->{$plugin} );
 
 		}
 
-		switch ( $version ) {
-
-			case 1.0:
-				$args['body']['plugins'] = serialize( $plugins );
-				break;
-
-			case 1.1:
-				$args['body']['plugins'] = json_encode( $plugins );
-				break;
-
-		}
+		$args['body']['plugins'] = json_encode( $plugins );
 
 		return $args;
 
@@ -167,7 +162,8 @@ class EUAPI {
 		switch ( $version ) {
 
 			case 1.0:
-				$themes = unserialize( $args['body']['themes'] );
+				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Plugin API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
+				return $args;
 				break;
 
 			case 1.1:
@@ -184,7 +180,11 @@ class EUAPI {
 			return $args;
 		}
 
-		foreach ( $themes as $theme => $data ) {
+		foreach ( $themes->themes as $theme => $data ) {
+
+			if ( is_object( $data ) ) {
+				$data = get_object_vars( $data );
+			}
 
 			if ( !is_array( $data ) ) {
 				continue;
@@ -204,21 +204,11 @@ class EUAPI {
 				$handler->item = $item;
 			}
 
-			unset( $themes[$theme] );
+			unset( $themes->themes->{$theme} );
 
 		}
 
-		switch ( $version ) {
-
-			case 1.0:
-				$args['body']['themes'] = serialize( $themes );
-				break;
-
-			case 1.1:
-				$args['body']['themes'] = json_encode( $themes );
-				break;
-
-		}
+		$args['body']['themes'] = json_encode( $themes );
 
 		return $args;
 
