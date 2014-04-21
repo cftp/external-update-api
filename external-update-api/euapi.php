@@ -117,14 +117,11 @@ class EUAPI {
 
 		foreach ( $plugins->plugins as $plugin => $data ) {
 
-			if ( is_object( $data ) ) {
-				$data = get_object_vars( $data );
-			}
-
-			if ( !is_array( $data ) ) {
+			if ( !is_object( $data ) ) {
 				continue;
 			}
 
+			$data    = get_object_vars( $data );
 			$item    = new EUAPI_Item_Plugin( $plugin, $data );
 			$handler = $this->get_handler( 'plugin', $plugin, $item );
 
@@ -182,16 +179,16 @@ class EUAPI {
 
 		foreach ( $themes->themes as $theme => $data ) {
 
-			if ( is_object( $data ) ) {
-				$data = get_object_vars( $data );
-			}
-
-			if ( !is_array( $data ) ) {
+			if ( !is_object( $data ) ) {
 				continue;
 			}
 
-			# ThemeURI is missing from $data by default for some reason
-			$data['ThemeURI'] = wp_get_theme( $data['Template'] )->get( 'ThemeURI' );
+			$data = get_object_vars( $data );
+
+			if ( !isset( $data['ThemeURI'] ) ) {
+				# ThemeURI is missing from $data by default for some reason
+				$data['ThemeURI'] = wp_get_theme( $data['Template'] )->get( 'ThemeURI' );
+			}
 
 			$item    = new EUAPI_Item_Theme( $theme, $data );
 			$handler = $this->get_handler( 'theme', $theme, $item );
