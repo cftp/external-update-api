@@ -47,7 +47,7 @@ function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 add_filter( 'euapi_plugin_handler', 'my_update_handler', 10, 2 );
 ```
 
-If your repo is private then you'll need to pass in an additional `access_token` parameter that contains your oAuth access token.
+If your repo is private then you'll need to pass in an additional `access_token` parameter that contains your OAuth access token.
 
 ### Writing a new Handler ###
 
@@ -59,11 +59,17 @@ None yet.
 
 ## Upgrade Notice ##
 
-### 0.3.5 ###
+### 0.4 ###
 
-* Support JSON-encoded SSL API requests to api.wordpress.org. This is pre-emptive support for WordPress 3.7.
+* At long-last fix the wonky compatibility with WordPress 3.7+.
+* Increase the minimum required WordPress version to 3.7.
 
 ## Changelog ##
+
+### 0.4 ###
+
+* At long-last fix the wonky compatibility with WordPress 3.7+.
+* Increase the minimum required WordPress version to 3.7.
 
 ### 0.3.5 ###
 
@@ -71,11 +77,11 @@ None yet.
 
 ### 0.3.4 ###
 
-* Support the upcoming SSL communication with api.wordpress.org
+* Support the upcoming SSL communication with `api.wordpress.org`
 
 ### 0.3.3 ###
 
-* Correct a method name in the EUAPI_Handler` class.
+* Correct a method name in the `EUAPI_Handler` class.
 
 ### 0.3.2 ###
 
@@ -91,6 +97,7 @@ None yet.
 * Allow a handler to return boolean false to prevent update checks being performed altogether.
 
 ### 0.2.4 ###
+
 * First public release.
 
 ## Screenshots ##
