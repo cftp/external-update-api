@@ -22,8 +22,9 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 */
 	public function __construct( array $config = array() ) {
 
-		if ( !isset( $config['github_url'] ) or !isset( $config['file'] ) )
+		if ( !isset( $config['github_url'] ) or !isset( $config['file'] ) ) {
 			return;
+		}
 
 		$defaults = array(
 			'type'         => 'plugin',
@@ -65,15 +66,17 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 			'timeout'   => $this->config['timeout'],
 		) );
 
-		if ( is_wp_error( $response ) )
+		if ( is_wp_error( $response ) ) {
 			return false;
+		}
 
 		$data = EUAPI::get_content_data( $response, array(
 			'version' => 'Version'
 		) );
 
-		if ( empty( $data['version'] ) )
+		if ( empty( $data['version'] ) ) {
 			return false;
+		}
 
 		return $data['version'];
 
@@ -100,8 +103,9 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 */
 	function get_file_url( $file = null ) {
 
-		if ( empty( $file ) )
+		if ( empty( $file ) ) {
 			$file = $this->config['file_name'];
+		}
 
 		$url = trailingslashit( $this->config['base_url'] ) . $file;
 

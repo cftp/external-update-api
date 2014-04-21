@@ -72,10 +72,11 @@ abstract class EUAPI_Handler {
 	 */
 	final public function get_current_version() {
 
-		if ( isset( $this->item ) )
+		if ( isset( $this->item ) ) {
 			return $this->item->get_version();
-		else
+		} else {
 			return false;
+		}
 
 	}
 
@@ -87,8 +88,9 @@ abstract class EUAPI_Handler {
 	 */
 	final public function get_new_version() {
 
-		if ( !isset( $this->new_version ) )
+		if ( !isset( $this->new_version ) ) {
 			$this->new_version = $this->fetch_new_version();
+		}
 
 		return $this->new_version;
 
@@ -102,8 +104,9 @@ abstract class EUAPI_Handler {
 	 */
 	final public function get_update() {
 
-		if ( isset( $this->update ) )
+		if ( isset( $this->update ) ) {
 			return $this->update;
+		}
 
 		$package = add_query_arg( array(
 			'_euapi_type' => $this->get_type(),
@@ -128,8 +131,9 @@ abstract class EUAPI_Handler {
 	 */
 	final public function get_info() {
 
-		if ( !isset( $this->info ) )
+		if ( !isset( $this->info ) ) {
 			$this->info = $this->fetch_info();
+		}
 
 		return $this->info;
 

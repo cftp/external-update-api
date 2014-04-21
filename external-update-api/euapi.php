@@ -60,16 +60,19 @@ class EUAPI {
 
 		$query = parse_url( $url, PHP_URL_QUERY );
 
-		if ( empty( $query ) )
+		if ( empty( $query ) ) {
 			return $args;
+		}
 
 		parse_str( $query, $query );
 
-		if ( !isset( $query['_euapi_type'] ) or !isset( $query['_euapi_file'] ) )
+		if ( !isset( $query['_euapi_type'] ) or !isset( $query['_euapi_file'] ) ) {
 			return $args;
+		}
 
-		if ( !( $handler = $this->get_handler( $query['_euapi_type'], $query['_euapi_file'] ) ) )
+		if ( !( $handler = $this->get_handler( $query['_euapi_type'], $query['_euapi_file'] ) ) ) {
 			return $args;
+		}
 
 		$args['sslverify'] = $handler->config['sslverify'];
 		$args['timeout']   = $handler->config['timeout'];
@@ -107,22 +110,26 @@ class EUAPI {
 
 		}
 
-		if ( empty( $plugins ) )
+		if ( empty( $plugins ) ) {
 			return $args;
+		}
 
 		foreach ( $plugins->plugins as $plugin => $data ) {
 
-			if ( !is_array( $data ) )
+			if ( !is_array( $data ) ) {
 				continue;
+			}
 
 			$item    = new EUAPI_Item_Plugin( $plugin, $data );
 			$handler = $this->get_handler( 'plugin', $plugin, $item );
 
-			if ( is_null( $handler ) )
+			if ( is_null( $handler ) ) {
 				continue;
+			}
 
-			if ( is_a( $handler, 'EUAPI_Handler' ) )
+			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
 				$handler->item = $item;
+			}
 
 			unset( $plugins->plugins[$plugin] );
 
@@ -173,13 +180,15 @@ class EUAPI {
 
 		}
 
-		if ( empty( $themes ) )
+		if ( empty( $themes ) ) {
 			return $args;
+		}
 
 		foreach ( $themes as $theme => $data ) {
 
-			if ( !is_array( $data ) )
+			if ( !is_array( $data ) ) {
 				continue;
+			}
 
 			# ThemeURI is missing from $data by default for some reason
 			$data['ThemeURI'] = wp_get_theme( $data['Template'] )->get( 'ThemeURI' );
@@ -187,11 +196,13 @@ class EUAPI {
 			$item    = new EUAPI_Item_Theme( $theme, $data );
 			$handler = $this->get_handler( 'theme', $theme, $item );
 
-			if ( is_null( $handler ) )
+			if ( is_null( $handler ) ) {
 				continue;
+			}
 
-			if ( is_a( $handler, 'EUAPI_Handler' ) )
+			if ( is_a( $handler, 'EUAPI_Handler' ) ) {
 				$handler->item = $item;
+			}
 
 			unset( $themes[$theme] );
 
@@ -224,8 +235,9 @@ class EUAPI {
 	 * @return object         The updated update check object.
 	 */
 	function check_plugins( $update ) {
-		if ( !isset( $this->handlers['plugin'] ) )
+		if ( !isset( $this->handlers['plugin'] ) ) {
 			return $update;
+		}
 		return $this->check( $update, $this->handlers['plugin'] );
 	}
 
@@ -240,8 +252,9 @@ class EUAPI {
 	 * @return object         Updated update check object.
 	 */
 	function check_themes( $update ) {
-		if ( !isset( $this->handlers['theme'] ) )
+		if ( !isset( $this->handlers['theme'] ) ) {
 			return $update;
+		}
 		return $this->check( $update, $this->handlers['theme'] );
 	}
 
@@ -256,18 +269,20 @@ class EUAPI {
 	 */
 	public function check( $update, array $handlers ) {
 
-		if ( empty( $update->checked ) )
+		if ( empty( $update->checked ) ) {
 			return $update;
+		}
 
 		foreach ( array_filter( $handlers ) as $handler ) {
 
 			$handler_update = $handler->get_update();
 
 			if ( $handler_update->get_new_version() and 1 === version_compare( $handler_update->get_new_version(), $handler->get_current_version() ) ) {
-				if ( 'plugin' == $handler->get_type() )
+				if ( 'plugin' == $handler->get_type() ) {
 					$update->response[ $handler->get_file() ] = (object) $handler_update->get_data_to_store();
-				else
+				} else {
 					$update->response[ $handler->get_file() ] = $handler_update->get_data_to_store();
+				}
 			}
 
 		}
@@ -285,18 +300,20 @@ class EUAPI {
 	 * @param  EUAPI_Item|null    $item Item object for the plugin/theme. Optional.
 	 * @return EUAPI_Handler|null       Update handler object, or null if no update handler is present.
 	 */
-	function get_handler( $type, $file, $item = null ) {
+	public function get_handler( $type, $file, $item = null ) {
 
-		if ( isset( $this->handlers[$type] ) and array_key_exists( $file, $this->handlers[$type] ) )
+		if ( isset( $this->handlers[$type] ) and array_key_exists( $file, $this->handlers[$type] ) ) {
 			return $this->handlers[$type][$file];
+		}
 
 		if ( !$item )
 			$item = $this->populate_item( $type, $file );
 
-		if ( !$item )
+		if ( !$item ) {
 			$handler = null;
-		else
+		} else {
 			$handler = apply_filters( "euapi_{$type}_handler", null, $item );
+		}
 
 		$this->handlers[$type][$file] = $handler;
 
@@ -318,13 +335,15 @@ class EUAPI {
 		switch ( $type ) {
 
 			case 'plugin':
-				if ( $data = self::get_plugin_data( $file ) )
+				if ( $data = self::get_plugin_data( $file ) ) {
 					return new EUAPI_Item_Plugin( $file, $data );
+				}
 				break;
 
 			case 'theme':
-				if ( $data = self::get_theme_data( $file ) )
+				if ( $data = self::get_theme_data( $file ) ) {
 					return new EUAPI_Item_Theme( $file, $data );
+				}
 				break;
 
 		}
@@ -343,8 +362,9 @@ class EUAPI {
 
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 
-		if ( file_exists( $plugin =  WP_PLUGIN_DIR . '/' . $file ) )
+		if ( file_exists( $plugin =  WP_PLUGIN_DIR . '/' . $file ) ) {
 			return get_plugin_data( $plugin );
+		}
 
 		return false;
 
@@ -360,8 +380,9 @@ class EUAPI {
 
 		$theme = wp_get_theme( $file );
 
-		if ( !$theme->exists() )
+		if ( !$theme->exists() ) {
 			return false;
+		}
 
 		$data = array(
 			'Name'        => '',
@@ -377,8 +398,9 @@ class EUAPI {
 			'DomainPath'  => '',
 		);
 
-		foreach ( $data as $k => $v )
+		foreach ( $data as $k => $v ) {
 			$data[$k] = $theme->get( $k );
+		}
 
 		return $data;
 
@@ -398,13 +420,16 @@ class EUAPI {
 	 */
 	public function get_plugin_info( $default, $action, $plugin ) {
 
-		if ( 'plugin_information' != $action )
+		if ( 'plugin_information' != $action ) {
 			return $default;
-		if ( false === strpos( $plugin->slug, '/' ) )
+		}
+		if ( false === strpos( $plugin->slug, '/' ) ) {
 			return $default;
+		}
 
-		if ( !( $handler = $this->get_handler( 'plugin', $plugin->slug ) ) )
+		if ( !( $handler = $this->get_handler( 'plugin', $plugin->slug ) ) ) {
 			return $default;
+		}
 
 		return $handler->get_info();
 
@@ -424,11 +449,13 @@ class EUAPI {
 	 */
 	public function get_theme_info( $default, $action, $theme ) {
 
-		if ( 'theme_information' != $action )
+		if ( 'theme_information' != $action ) {
 			return $default;
+		}
 
-		if ( !( $handler = $this->get_handler( 'theme', $theme->slug ) ) )
+		if ( !( $handler = $this->get_handler( 'theme', $theme->slug ) ) ) {
 			return $default;
+		}
 
 		return $handler->get_info();
 
@@ -450,8 +477,9 @@ class EUAPI {
 
 		$response = wp_remote_get( $url, $args );
 
-		if ( is_wp_error( $response ) )
+		if ( is_wp_error( $response ) ) {
 			return $response;
+		}
 
 		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
 			return new WP_Error( 'fetch_failed', sprintf( __( 'Received HTTP response code %s (%s).', 'euapi' ),
@@ -469,19 +497,21 @@ class EUAPI {
 		# @see WordPress' get_file_data()
 
 		// Pull only the first 8kiB of the file in.
-		if ( function_exists( 'mb_substr' ) )
+		if ( function_exists( 'mb_substr' ) ) {
 			$file_data = mb_substr( $content, 0, 8192 );
-		else
+		} else {
 			$file_data = substr( $content, 0, 8192 );
+		}
 
 		// Make sure we catch CR-only line endings.
 		$file_data = str_replace( "\r", "\n", $file_data );
 
 		foreach ( $all_headers as $field => $regex ) {
-			if ( preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, $match ) && $match[1] )
+			if ( preg_match( '/^[ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':(.*)$/mi', $file_data, $match ) && $match[1] ) {
 				$all_headers[ $field ] = _cleanup_header_comment( $match[1] );
-			else
+			} else {
 				$all_headers[ $field ] = '';
+			}
 		}
 
 		return $all_headers;
@@ -489,10 +519,11 @@ class EUAPI {
 
 	public function upgrader_pre_install( $true, array $hook_extra ) {
 
-		if ( isset( $hook_extra['plugin'] ) )
+		if ( isset( $hook_extra['plugin'] ) ) {
 			$this->get_handler( 'plugin', $hook_extra['plugin'] );
-		else if ( isset( $hook_extra['theme'] ) )
+		} else if ( isset( $hook_extra['theme'] ) ) {
 			$this->get_handler( 'theme', $hook_extra['theme'] );
+		}
 
 		return $true;
 
@@ -502,15 +533,17 @@ class EUAPI {
 
 		global $wp_filesystem;
 
-		if ( isset( $hook_extra['plugin'] ) )
+		if ( isset( $hook_extra['plugin'] ) ) {
 			$handler = $this->get_handler( 'plugin', $hook_extra['plugin'] );
-		else if ( isset( $hook_extra['theme'] ) )
+		} else if ( isset( $hook_extra['theme'] ) ) {
 			$handler = $this->get_handler( 'theme', $hook_extra['theme'] );
-		else
+		} else {
 			return $true;
+		}
 
-		if ( !$handler )
+		if ( !$handler ) {
 			return $true;
+		}
 
 		switch ( $handler->get_type() ) {
 

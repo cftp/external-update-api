@@ -35,8 +35,9 @@ defined( 'ABSPATH' ) or die();
  */
 function euapi_autoloader( $class ) {
 
-	if ( 0 !== strpos( $class, 'EUAPI' ) )
+	if ( 0 !== strpos( $class, 'EUAPI' ) ) {
 		return;
+	}
 
 	$name = str_replace( 'EUAPI_', '', $class );
 	$name = str_replace( '_', '-', $name );
@@ -47,8 +48,9 @@ function euapi_autoloader( $class ) {
 		$name
 	);
 
-	if ( is_readable( $file ) )
+	if ( is_readable( $file ) ) {
 		include $file;
+	}
 
 }
 
