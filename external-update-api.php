@@ -10,7 +10,7 @@ Text Domain:  euapi
 Domain Path:  /languages/
 License:      GPL v2 or later
 
-Copyright © 2013 Code for the People Ltd
+Copyright © 2014 Code for the People Ltd
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ GNU General Public License for more details.
 defined( 'ABSPATH' ) or die();
 
 /**
- * Class autoloader
+ * EUAPI class autoloader
  *
  * @author John Blackbourn
  * @param  string $class Class name
@@ -58,7 +58,6 @@ function euapi_autoloader( $class ) {
  * Flush the site's plugin and theme update transients. Fired on activation and deactivation.
  *
  * @author John Blackbourn
- * @return null
  */
 function euapi_flush_transients() {
 	delete_site_transient( 'update_plugins' );

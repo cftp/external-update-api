@@ -2,8 +2,8 @@
 
 **Contributors:** codeforthepeople, johnbillion  
 **Tags:** updates, github  
-**Requires at least:** 3.4  
-**Tested up to:** 3.7  
+**Requires at least:** 3.7  
+**Tested up to:** 3.9  
 **Stable tag:** 0.3.5  
 **License:** GPL v2 or later  
 
