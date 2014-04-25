@@ -4,14 +4,14 @@ Plugin Name:  External Update API
 Plugin URI:   https://github.com/cftp/external-update-api
 Description:  Add support for updating themes and plugins via external sources instead of wordpress.org
 Version:      0.4
-Author:       Code for the People
+Author:       Code For The People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  euapi
 Domain Path:  /languages/
 License:      GPL v2 or later
 Network:      true
 
-Copyright © 2014 Code for the People Ltd
+Copyright © 2014 Code For The People Ltd
 
             _____________
            /      ____   \

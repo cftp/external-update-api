@@ -3,7 +3,7 @@
 Plugin Name:  GitHub OAuth Connector
 Description:  Provides an interface for fetching and storing an OAuth access token from a GitHub application.
 Version:      1.6.2
-Author:       Code for the People
+Author:       Code For The People
 Author URI:   http://codeforthepeople.com/
 Text Domain:  github-oauth-connector
 Domain Path:  /languages/
