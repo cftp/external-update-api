@@ -57,6 +57,15 @@ abstract class EUAPI_Handler {
 	abstract public function fetch_info();
 
 	/**
+	 * Fetch the upgrade notice for the item, typically from an external location.
+	 *
+	 * @return string|false Upgrade notice, or false on failure.
+	 */
+	public function fetch_upgrade_notice(){
+		return false;
+	}
+
+	/**
 	 * Get the current item's base file name (eg. my-plugin/my-plugin.php or my-theme/style.css).
 	 *
 	 * @author John Blackbourn
@@ -99,6 +108,22 @@ abstract class EUAPI_Handler {
 	}
 
 	/**
+	 * Get the upgrade notice for the item.
+	 *
+	 * @author John Blackbourn
+	 * @return string|false Upgrade notice, or false on failure.
+	 */
+	final public function get_upgrade_notice() {
+
+		if ( !isset( $this->upgrade_notice ) ) {
+			$this->upgrade_notice = $this->fetch_upgrade_notice();
+		}
+
+		return $this->upgrade_notice;
+
+	}
+
+	/**
 	 * Get the update object for the item.
 	 *
 	 * @author John Blackbourn
@@ -118,6 +143,7 @@ abstract class EUAPI_Handler {
 		return $this->update = new EUAPI_Update( array(
 			'slug'        => $this->get_file(),
 			'new_version' => $this->get_new_version(),
+			'upgrade_notice' => $this->get_upgrade_notice(),
 			'url'         => $this->get_homepage_url(),
 			'package'     => $package,
 			'config'      => $this->get_config(),

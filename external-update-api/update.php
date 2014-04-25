@@ -13,7 +13,7 @@ class EUAPI_Update {
 
 		$this->slug           = $args['slug'];
 		$this->new_version    = $args['new_version'];
-		$this->upgrade_notice = '';
+		$this->upgrade_notice = $args['upgrade_notice'];
 		$this->url            = $args['url'];
 		$this->package        = $args['package'];
 
