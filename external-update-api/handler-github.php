@@ -17,8 +17,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	/**
 	 * Class constructor
 	 *
-	 * @param  array $config Configuration for the handler.
-	 * @return void
+	 * @param  array $config Configuration for the handler. @TODO document $config options
 	 */
 	public function __construct( array $config = array() ) {
 
@@ -27,7 +26,6 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 		}
 
 		$defaults = array(
-			'type'         => 'plugin',
 			'access_token' => null,
 			'folder_name'  => dirname( $config['file'] ),
 			'file_name'    => basename( $config['file'] ),
