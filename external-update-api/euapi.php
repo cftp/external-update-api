@@ -225,7 +225,7 @@ class EUAPI {
 		if ( !isset( $this->handlers['plugin'] ) ) {
 			return $update;
 		}
-		return $this->check( $update, $this->handlers['plugin'] );
+		return self::check( $update, $this->handlers['plugin'] );
 	}
 
 	/**
@@ -242,7 +242,7 @@ class EUAPI {
 		if ( !isset( $this->handlers['theme'] ) ) {
 			return $update;
 		}
-		return $this->check( $update, $this->handlers['theme'] );
+		return self::check( $update, $this->handlers['theme'] );
 	}
 
 	/**
@@ -254,7 +254,7 @@ class EUAPI {
 	 * @param  array  $handlers Handlers that we're interested in.
 	 * @return object           Updated update check object.
 	 */
-	public function check( $update, array $handlers ) {
+	public static function check( $update, array $handlers ) {
 
 		if ( empty( $update->checked ) ) {
 			return $update;
