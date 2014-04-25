@@ -9,6 +9,8 @@ if ( ! class_exists( 'EUAPI_Info' ) ) :
  */
 class EUAPI_Info {
 
+	public $external = true;
+
 	public function __construct( array $args ) {
 
 		foreach ( $args as $k => $v ) {

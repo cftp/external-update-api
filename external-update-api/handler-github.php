@@ -46,7 +46,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 			$repo
 		);
 
-		$config = wp_parse_args( $config, $defaults );
+		$config = array_merge( $defaults, $config );
 
 		parent::__construct( $config );
 
@@ -170,8 +170,9 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 			'timeout'   => $this->config['timeout'],
 		) );
 
-		if ( is_wp_error( $response ) )
+		if ( is_wp_error( $response ) ) {
 			return $response;
+		}
 
 		$data = EUAPI::get_content_data( $response, $fields );
 
