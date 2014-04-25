@@ -9,6 +9,7 @@ Author URI:   http://codeforthepeople.com/
 Text Domain:  euapi
 Domain Path:  /languages/
 License:      GPL v2 or later
+Network:      true
 
 Copyright © 2014 Code for the People Ltd
 
