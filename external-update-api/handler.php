@@ -155,7 +155,7 @@ abstract class EUAPI_Handler {
 	 * Get the info object for the item.
 	 *
 	 * @author John Blackbourn
-	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
+	 * @return EUAPI_Info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
 	 */
 	final public function get_info() {
 

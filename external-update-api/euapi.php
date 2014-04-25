@@ -159,7 +159,7 @@ class EUAPI {
 		switch ( $version ) {
 
 			case 1.0:
-				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Plugin API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
+				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Theme API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
 				return $args;
 				break;
 
@@ -395,8 +395,8 @@ class EUAPI {
 	}
 
 	/**
-	 * When the Plugin API performs an action, this callback is fired, allowing us to override the API method
-	 * for a given action.
+	 * Before the Plugin API performs an action, this short-circuit callback is fired, allowing us to override the
+	 * API method for a given action.
 	 *
 	 * Here, we override the action which fetches plugin information from the wp.org API
 	 * and return our own plugin information if necessary.
@@ -426,8 +426,8 @@ class EUAPI {
 	}
 
 	/**
-	 * When the Theme API performs an action, this callback is fired, allowing us to override the API method
-	 * for a given action.
+	 * Before the Theme API performs an action, this short-circuit callback is fired, allowing us to override the
+	 * API method for a given action.
 	 *
 	 * Here, we override the action which fetches theme information from the wp.org API
 	 * and return our own theme information if necessary.

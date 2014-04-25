@@ -140,7 +140,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 * Fetch info about the latest version of the item.
 	 *
 	 * @author John Blackbourn
-	 * @return EUAPI_info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
+	 * @return EUAPI_Info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
 	 */
 	public function fetch_info() {
 
