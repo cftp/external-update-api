@@ -68,6 +68,4 @@ register_deactivation_hook( __FILE__, 'euapi_flush_transients' );
 
 spl_autoload_register( 'euapi_autoloader' );
 
-global $euapi;
-
-$euapi = new EUAPI;
+EUAPI::init();

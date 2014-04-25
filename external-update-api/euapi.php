@@ -5,7 +5,7 @@ defined( 'ABSPATH' ) or die();
 if ( ! class_exists( 'EUAPI' ) ) :
 
 /**
- * Main instance of the EUAPI plugin.
+ * The EUAPI plugin class.
  */
 class EUAPI {
 
@@ -16,7 +16,7 @@ class EUAPI {
 	 *
 	 * @author John Blackbourn
 	 */
-	public function __construct() {
+	private function __construct() {
 
 		add_filter( 'http_request_args',                     array( $this, 'filter_http_request_args' ), 20, 2 );
 
@@ -551,6 +551,23 @@ class EUAPI {
 		return $result;
 
 	}
+
+	/**
+	 * Singleton instantiator.
+	 * 
+	 * @return EUAPI Our instance of the EUAPI class.
+	 */
+	public static function init() {
+
+		static $instance = null;
+
+		if ( !$instance )
+			$instance = new EUAPI;
+
+		return $instance;
+
+	}
+
 
 }
 
