@@ -297,7 +297,7 @@ class EUAPI {
 			$item = self::populate_item( $type, $file );
 		}
 
-		if ( !$item ) {
+		if ( ! is_a( $item, 'EUAPI_Item' ) ) {
 			$handler = null;
 		} else {
 			$handler = apply_filters( "euapi_{$type}_handler", null, $item );
@@ -415,7 +415,9 @@ class EUAPI {
 			return $default;
 		}
 
-		if ( !( $handler = $this->get_handler( 'plugin', $plugin->slug ) ) ) {
+		$handler = $this->get_handler( 'plugin', $plugin->slug );
+
+		if ( ! is_a( $handler, 'EUAPI_Handler' ) ) {
 			return $default;
 		}
 
@@ -529,7 +531,7 @@ class EUAPI {
 			return $true;
 		}
 
-		if ( !$handler ) {
+		if ( ! is_a( $handler, 'EUAPI_Handler' ) ) {
 			return $true;
 		}
 
