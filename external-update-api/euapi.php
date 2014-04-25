@@ -111,7 +111,7 @@ class EUAPI {
 
 		}
 
-		if ( empty( $plugins ) ) {
+		if ( empty( $plugins ) or ! is_object( $plugins ) or empty( $plugins->plugins ) ) {
 			return $args;
 		}
 
@@ -173,7 +173,7 @@ class EUAPI {
 
 		}
 
-		if ( empty( $themes ) ) {
+		if ( empty( $themes ) or ! is_object( $themes ) or empty( $themes->themes ) ) {
 			return $args;
 		}
 
@@ -443,7 +443,9 @@ class EUAPI {
 			return $default;
 		}
 
-		if ( !( $handler = $this->get_handler( 'theme', $theme->slug ) ) ) {
+		$handler = $this->get_handler( 'theme', $theme->slug );
+
+		if ( ! is_a( $handler, 'EUAPI_Handler' ) ) {
 			return $default;
 		}
 
