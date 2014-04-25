@@ -507,7 +507,7 @@ class EUAPI {
 		return $all_headers;
 	}
 
-	public function filter_upgrader_pre_install( $true, array $hook_extra ) {
+	public function filter_upgrader_pre_install( $default, array $hook_extra ) {
 
 		if ( isset( $hook_extra['plugin'] ) ) {
 			$this->get_handler( 'plugin', $hook_extra['plugin'] );
@@ -515,11 +515,11 @@ class EUAPI {
 			$this->get_handler( 'theme', $hook_extra['theme'] );
 		}
 
-		return $true;
+		return $default;
 
 	}
 
-	public function filter_upgrader_post_install( $true, array $hook_extra, array $result ) {
+	public function filter_upgrader_post_install( $default, array $hook_extra, array $result ) {
 
 		global $wp_filesystem;
 
@@ -528,11 +528,11 @@ class EUAPI {
 		} else if ( isset( $hook_extra['theme'] ) ) {
 			$handler = $this->get_handler( 'theme', $hook_extra['theme'] );
 		} else {
-			return $true;
+			return $default;
 		}
 
 		if ( ! is_a( $handler, 'EUAPI_Handler' ) ) {
-			return $true;
+			return $default;
 		}
 
 		switch ( $handler->get_type() ) {
