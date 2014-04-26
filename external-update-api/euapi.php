@@ -74,8 +74,7 @@ class EUAPI {
 			return $args;
 		}
 
-		$args['sslverify'] = $handler->config['sslverify'];
-		$args['timeout']   = $handler->config['timeout'];
+		$args = array_merge( $args, $handler->config['http'] );
 
 		return $args;
 

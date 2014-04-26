@@ -12,7 +12,7 @@ if ( ! class_exists( 'EUAPI_Handler_GitHub' ) ) :
  * If a repo is private then a valid OAuth access token must be passed in the 'access_token' argument.
  * See http://developer.github.com/v3/oauth/ for details.
  */
-class EUAPI_Handler_GitHub extends EUAPI_Handler {
+class EUAPI_Handler_GitHub extends EUAPI_Handler_Files {
 
 	/**
 	 * Class constructor
@@ -29,7 +29,6 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 			'access_token' => null,
 			'folder_name'  => dirname( $config['file'] ),
 			'file_name'    => basename( $config['file'] ),
-			'sslverify'    => true,
 		);
 
 		$path = trim( parse_url( $config['github_url'], PHP_URL_PATH ), '/' );
@@ -39,44 +38,12 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 			$username,
 			$repo
 		);
-		$defaults['zip_url'] = sprintf( 'https://api.github.com/repos/%1$s/%2$s/zipball',
+		$defaults['package_url'] = sprintf( 'https://api.github.com/repos/%1$s/%2$s/zipball',
 			$username,
 			$repo
 		);
 
-		$config = array_merge( $defaults, $config );
-
-		parent::__construct( $config );
-
-	}
-
-	/**
-	 * Fetch the latest version number from the GitHub repo. Does this by fetching the plugin
-	 * file and then parsing the header to get the version number.
-	 *
-	 * @author John Blackbourn
-	 * @return string|false Version number, or false on failure.
-	 */
-	public function fetch_new_version() {
-
-		$response = EUAPI::fetch( $this->get_file_url(), array(
-			'sslverify' => $this->config['sslverify'],
-			'timeout'   => $this->config['timeout'],
-		) );
-
-		if ( is_wp_error( $response ) ) {
-			return false;
-		}
-
-		$data = EUAPI::get_content_data( $response, array(
-			'version' => 'Version'
-		) );
-
-		if ( empty( $data['version'] ) ) {
-			return false;
-		}
-
-		return $data['version'];
+		parent::__construct( array_merge( $defaults, $config ) );
 
 	}
 
@@ -124,7 +91,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 	 */
 	public function get_package_url() {
 
-		$url = $this->config['zip_url'];
+		$url = $this->config['package_url'];
 
 		if ( !empty( $this->config['access_token'] ) ) {
 			$url = add_query_arg( array(
@@ -133,64 +100,6 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 		}
 
 		return $url;
-
-	}
-
-	/**
-	 * Fetch info about the latest version of the item.
-	 *
-	 * @author John Blackbourn
-	 * @return EUAPI_Info|WP_Error An EUAPI_Info object, or a WP_Error object on failure.
-	 */
-	public function fetch_info() {
-
-		$fields = array(
-			'author'      => 'Author',
-			'description' => 'Description'
-		);
-
-		switch ( $this->get_type() ) {
-
-			case 'plugin':
-				$file = $this->get_file_url();
-				$fields['plugin_name'] = 'Plugin Name';
-				break;
-
-			case 'theme':
-				$file = $this->get_file_url( 'style.css' );
-				$fields['theme_name'] = 'Theme Name';
-				break;
-
-		}
-
-		$response = EUAPI::fetch( $file, array(
-			'sslverify' => $this->config['sslverify'],
-			'timeout'   => $this->config['timeout'],
-		) );
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$data = EUAPI::get_content_data( $response, $fields );
-
-		$info = array_merge( $data, array(
-
-			'slug'          => $this->get_file(),
-			'version'       => $this->get_new_version(),
-			'homepage'      => $this->get_homepage_url(),
-			'download_link' => $this->get_package_url(),
-	#		'requires'      => '',
-	#		'tested'        => '',
-	#		'last_updated'  => '',
-			'downloaded'    => 0,
-			'sections'      => array(
-				'description' => $data['description'],
-			),
-
-		) );
-
-		return new EUAPI_Info( $info );
 
 	}
 
