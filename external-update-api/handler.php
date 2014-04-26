@@ -15,7 +15,7 @@ abstract class EUAPI_Handler {
 	 * @param  array $config Configuration for the handler. @TODO document $config options
 	 * @return void
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config ) {
 		$defaults = array(
 			'type' => 'plugin',
 		);

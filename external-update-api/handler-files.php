@@ -16,7 +16,7 @@ abstract class EUAPI_Handler_Files extends EUAPI_Handler {
 	 *
 	 * @param array $config Configuration for the handler.
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config ) {
 
 		$defaults = array(
 			'http' => array(

@@ -19,7 +19,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler_Files {
 	 *
 	 * @param  array $config Configuration for the handler. @TODO document $config options
 	 */
-	public function __construct( array $config = array() ) {
+	public function __construct( array $config ) {
 
 		if ( !isset( $config['github_url'] ) or !isset( $config['file'] ) ) {
 			return;
