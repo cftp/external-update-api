@@ -95,16 +95,12 @@ class EUAPI {
 
 		switch ( $version ) {
 
-			case 1.0:
-				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Plugin API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
-				return $args;
-				break;
-
 			case 1.1:
 				$plugins = json_decode( $args['body']['plugins'] );
 				break;
 
 			default:
+				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Plugin API.', 'euapi' ), $version ), 0.4 );
 				return $args;
 				break;
 
@@ -157,16 +153,12 @@ class EUAPI {
 
 		switch ( $version ) {
 
-			case 1.0:
-				_doing_it_wrong( __METHOD__, __( 'External Update API is no longer compatible with version 1.0 of the WordPress Theme API. Please update to WordPress 3.7 or later.', 'euapi' ), 0.4 );
-				return $args;
-				break;
-
 			case 1.1:
 				$themes = json_decode( $args['body']['themes'] );
 				break;
 
 			default:
+				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Theme API.', 'euapi' ), $version ), 0.4 );
 				return $args;
 				break;
 
