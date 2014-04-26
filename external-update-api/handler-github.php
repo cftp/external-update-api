@@ -35,7 +35,7 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler {
 		$path = trim( parse_url( $config['github_url'], PHP_URL_PATH ), '/' );
 		list( $username, $repo ) = explode( '/', $path, 2 );
 
-		$defaults['base_url'] = sprintf( 'https://raw.github.com/%1$s/%2$s/master',
+		$defaults['base_url'] = sprintf( 'https://raw.githubusercontent.com/%1$s/%2$s/master',
 			$username,
 			$repo
 		);
