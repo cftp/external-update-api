@@ -484,9 +484,16 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Parse a plugin or theme file to fetch its header values.
+	 *
+	 * Based on WordPress' `get_file_data()` function.
+	 * 
+	 * @param  string $content     The file content.
+	 * @param  array  $all_headers The headers to return.
+	 * @return array               The header values.
+	 */
 	public static function get_content_data( $content, array $all_headers ) {
-
-		# @see WordPress' get_file_data()
 
 		// Pull only the first 8kiB of the file in.
 		if ( function_exists( 'mb_substr' ) ) {
@@ -509,6 +516,13 @@ class EUAPI {
 		return $all_headers;
 	}
 
+	/**
+	 * Pre-load our handlers so the plugin/theme update filters can function.
+	 * 
+	 * @param  bool|WP_Error $default    Default return value for the update. Usually boolean true.
+	 * @param  array         $hook_extra Extra arguments passed to hooked filters.
+	 * @return bool|WP_Error             Boolean true or a WP_Error object.
+	 */
 	public function filter_upgrader_pre_install( $default, array $hook_extra ) {
 
 		if ( isset( $hook_extra['plugin'] ) ) {
@@ -521,6 +535,14 @@ class EUAPI {
 
 	}
 
+	/**
+	 * If we have a handler for this update, do some post-processing after the update.
+	 * 
+	 * @param  bool|WP_Error $default    Default return value for the update. Usually boolean true.
+	 * @param  array         $hook_extra Extra arguments passed to hooked filters.
+	 * @param  array         $result     Installation result data.
+	 * @return bool|WP_Error             Boolean true or a WP_Error object.
+	 */
 	public function filter_upgrader_post_install( $default, array $hook_extra, array $result ) {
 
 		global $wp_filesystem;

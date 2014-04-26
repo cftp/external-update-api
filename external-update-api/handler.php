@@ -12,7 +12,7 @@ abstract class EUAPI_Handler {
 	/**
 	 * Class constructor
 	 *
-	 * @param  array $config Configuration for the handler.
+	 * @param  array $config Configuration for the handler. @TODO document $config options
 	 * @return void
 	 */
 	public function __construct( array $config = array() ) {
