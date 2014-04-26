@@ -16,15 +16,19 @@ abstract class EUAPI_Handler {
 	 *     Configuration for the handler.
 	 *
 	 *     @type string $file The EUAPI_Item file name.
-	 *     @type string $type The item type. Accepts 'plugin' or 'theme'. Optional. Defaults to 'plugin'.
+	 *     @type string $type The item type. Accepts 'plugin' or 'theme'.
 	 * }
 	 */
 	public function __construct( array $config ) {
-		$defaults = array(
-			'type'        => 'plugin',
-			'folder_name' => dirname( $config['file'] ),
-			'file_name'   => basename( $config['file'] ),
-		);
+		$defaults = array();
+
+		if ( 'theme' === $config['type'] ) {
+			$defaults['folder_name'] = $config['file'];
+			$defaults['file_name']   = 'style.css';
+		} else if ( 'plugin' === $config['type'] ) {
+			$defaults['folder_name'] = dirname( $config['file'] );
+			$defaults['file_name']   = basename( $config['file'] );
+		}
 
 		// @TODO document this filter name
 		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", array_merge( $defaults, $config ) );

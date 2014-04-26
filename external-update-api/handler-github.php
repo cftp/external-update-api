@@ -22,8 +22,8 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler_Files {
 	 *
 	 *     @type string $github_url   The URL of the repo homepage.
 	 *     @type string $file         The EUAPI_Item file name.
+	 *     @type string $type The item type. Accepts 'plugin' or 'theme'.
 	 *     @type string $access_token A GitHub API access token if this is a handler for a private repo. Optional.
-	 *     @type string $type         The item type. Accepts 'plugin' or 'theme'. Optional. Defaults to 'plugin'.
 	 *     @type array  $http         Array of args to pass to any HTTP requests relating to this handler. Optional.
 	 * }
 	 */

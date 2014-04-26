@@ -564,16 +564,15 @@ class EUAPI {
 				$proper_destination = WP_PLUGIN_DIR . '/' . $handler->config['folder_name'];
 				break;
 			case 'theme':
-				$proper_destination = get_theme_root( $handler->config['file_name'] ) . '/' . $handler->config['file_name'];
+				$proper_destination = get_theme_root() . '/' . $handler->config['folder_name'];
 				break;
 
 		}
 
 		// Move
-		$move = $wp_filesystem->move( $result['destination'], $proper_destination );
-		$result['destination'] = $proper_destination;
+		$wp_filesystem->move( $result['destination'], $proper_destination );
 
-		return $result;
+		return $default;
 
 	}
 
