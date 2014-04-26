@@ -452,11 +452,11 @@ class EUAPI {
 	 * @param  array    $args  Array of arguments passed to wp_remote_get().
 	 * @return WP_Error|string WP_Error object on failure, string contents of file on success.
 	 */
-	public static function fetch( $url, array $args = null ) {
+	public static function fetch( $url, array $args = array() ) {
 
-		$args = wp_parse_args( $args, array(
+		$args = array_merge( array(
 			'timeout' => 5
-		) );
+		), $args );
 
 		$response = wp_remote_get( $url, $args );
 
