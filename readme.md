@@ -25,10 +25,10 @@ The plugin comes bundled with an update handler for GitHub. To add a handler for
 
 You can tell the update API to use a public or private GitHub repo to update a plugin or theme on your site. To do this, hook into the `euapi_plugin_handler` or `euapi_theme_handler` hook, respectively, and return a handler for your plugin or theme.
 
-Example:
+Plugin Example:
 
 ```
-function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
+function my_plugin_update_handler( EUAPI_Handler $handler = null, EUAPI_Item_Plugin $item ) {
 
 	if ( 'my-plugin/my-plugin.php' == $item->file ) {
 
@@ -46,16 +46,40 @@ function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 	return $handler;
 
 }
-add_filter( 'euapi_plugin_handler', 'my_update_handler', 10, 2 );
+add_filter( 'euapi_plugin_handler', 'my_plugin_update_handler', 10, 2 );
+```
+
+Theme Example:
+
+```
+function my_theme_update_handler( EUAPI_Handler $handler = null, EUAPI_Item_Theme $item ) {
+
+	if ( 'my-theme/style.css' == $item->file ) {
+
+		$handler = new EUAPI_Handler_GitHub( array(
+			'type'       => $item->type,
+			'file'       => $item->file,
+			'github_url' => 'https://github.com/my-username/my-theme',
+			'http'       => array(
+				'sslverify' => false,
+			),
+		) );
+
+	}
+
+	return $handler;
+
+}
+add_filter( 'euapi_theme_handler', 'my_theme_update_handler', 10, 2 );
 ```
 
 If your repo is private then you'll need to pass in an additional `access_token` parameter that contains your OAuth access token.
 
-You can see example handlers in our [CFTP Updater repo](https://github.com/cftp/cftp-updater).
+You can see some more example handlers in our [CFTP Updater repo](https://github.com/cftp/cftp-updater).
 
 ### Writing a new Handler ###
 
-To write a new handler, your best bet is to copy the `EUAPI_Handler_GitHub` class included in the plugin and go from there. See the `EUAPI_Handler` class for the abstract methods which must be defined in your class.
+To write a new handler, your best bet is to copy the `EUAPI_Handler_GitHub` class included in the plugin and go from there. See the `EUAPI_Handler` class (and, optionally, the `EUAPI_Handler_Files` class) for the abstract methods which must be defined in your class.
 
 ## Frequently Asked Questions ##
 
