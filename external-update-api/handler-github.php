@@ -17,7 +17,15 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler_Files {
 	/**
 	 * Class constructor
 	 *
-	 * @param  array $config Configuration for the handler. @TODO document $config options
+	 * @param array $config {
+	 *     Configuration for the handler.
+	 *
+	 *     @type string $github_url   The URL of the repo homepage.
+	 *     @type string $file         The EUAPI_Item file name.
+	 *     @type string $access_token A GitHub API access token if this is a handler for a private repo. Optional.
+	 *     @type string $type         The item type. Accepts 'plugin' or 'theme'. Optional. Defaults to 'plugin'.
+	 *     @type array  $http         Array of args to pass to any HTTP requests relating to this handler. Optional.
+	 * }
 	 */
 	public function __construct( array $config ) {
 
@@ -27,8 +35,6 @@ class EUAPI_Handler_GitHub extends EUAPI_Handler_Files {
 
 		$defaults = array(
 			'access_token' => null,
-			'folder_name'  => dirname( $config['file'] ),
-			'file_name'    => basename( $config['file'] ),
 		);
 
 		$path = trim( parse_url( $config['github_url'], PHP_URL_PATH ), '/' );

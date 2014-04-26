@@ -14,7 +14,13 @@ abstract class EUAPI_Handler_Files extends EUAPI_Handler {
 	/**
 	 * Class constructor
 	 *
-	 * @param array $config Configuration for the handler.
+	 * @param array $config {
+	 *     Configuration for the handler.
+	 *
+	 *     @type string $file The EUAPI_Item file name.
+	 *     @type string $type The item type. Accepts 'plugin' or 'theme'. Optional. Defaults to 'plugin'.
+	 *     @type array  $http Array of args to pass to any HTTP requests relating to this handler. Optional.
+	 * }
 	 */
 	public function __construct( array $config ) {
 

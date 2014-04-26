@@ -12,13 +12,20 @@ abstract class EUAPI_Handler {
 	/**
 	 * Class constructor
 	 *
-	 * @param  array $config Configuration for the handler. @TODO document $config options
-	 * @return void
+	 * @param array $config {
+	 *     Configuration for the handler.
+	 *
+	 *     @type string $file The EUAPI_Item file name.
+	 *     @type string $type The item type. Accepts 'plugin' or 'theme'. Optional. Defaults to 'plugin'.
+	 * }
 	 */
 	public function __construct( array $config ) {
 		$defaults = array(
-			'type' => 'plugin',
+			'type'        => 'plugin',
+			'folder_name' => dirname( $config['file'] ),
+			'file_name'   => basename( $config['file'] ),
 		);
+
 		// @TODO document this filter name
 		$this->config = apply_filters( "euapi_{$config['type']}_handler_config", array_merge( $defaults, $config ) );
 	}

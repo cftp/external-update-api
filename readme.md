@@ -36,7 +36,9 @@ function my_update_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
 			'type'       => $item->type,
 			'file'       => $item->file,
 			'github_url' => 'https://github.com/my-username/my-plugin',
-			'sslverify'  => false
+			'http'       => array(
+				'sslverify' => false,
+			),
 		) );
 
 	}
