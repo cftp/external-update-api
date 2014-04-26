@@ -184,6 +184,9 @@ abstract class EUAPI_Handler {
 	 * @return string Handler type.
 	 */
 	final public function get_type() {
+		if ( !in_array( $this->config['type'], array( 'plugin', 'theme' ), true ) ) {
+			return 'plugin';
+		}
 		return $this->config['type'];
 	}
 
