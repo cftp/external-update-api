@@ -141,12 +141,12 @@ abstract class EUAPI_Handler {
 		), $this->get_package_url() );
 
 		return $this->update = new EUAPI_Update( array(
-			'slug'        => $this->get_file(),
-			'new_version' => $this->get_new_version(),
+			'slug'           => $this->get_file(),
+			'new_version'    => $this->get_new_version(),
 			'upgrade_notice' => $this->get_upgrade_notice(),
-			'url'         => $this->get_homepage_url(),
-			'package'     => $package,
-			'config'      => $this->get_config(),
+			'url'            => $this->get_homepage_url(),
+			'package'        => $package,
+			'config'         => $this->get_config(),
 		) );
 
 	}
