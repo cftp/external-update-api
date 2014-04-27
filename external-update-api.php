@@ -11,34 +11,21 @@ Domain Path:  /languages/
 License:      GPL v2 or later
 Network:      true
 
-Copyright © 2014 Code For The People Ltd
-
-            _____________
-           /      ____   \
-     _____/       \   \   \
-    /\    \        \___\   \
-   /  \    \                \
-  /   /    /          _______\
- /   /    /          \       /
-/   /    /            \     /
-\   \    \ _____    ___\   /
- \   \    /\    \  /       \
-  \   \  /  \____\/    _____\
-   \   \/        /    /    / \
-    \           /____/    /___\
-     \                        /
-      \______________________/
-
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+            _____________          
+           /      ____   \         
+     _____/       \   \   \        Copyright © 2014 Code For The People Ltd
+    /\    \        \___\   \       
+   /  \    \                \      This program is free software; you can redistribute it and/or modify
+  /   /    /          _______\     it under the terms of the GNU General Public License as published by
+ /   /    /          \       /     the Free Software Foundation; either version 2 of the License, or
+/   /    /            \     /      (at your option) any later version.
+\   \    \ _____    ___\   /       
+ \   \    /\    \  /       \       This program is distributed in the hope that it will be useful,
+  \   \  /  \____\/    _____\      but WITHOUT ANY WARRANTY; without even the implied warranty of
+   \   \/        /    /    / \     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    \           /____/    /___\    GNU General Public License for more details.
+     \                        /    
+      \______________________/     
 
 */
 

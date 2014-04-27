@@ -87,12 +87,24 @@ None yet.
 
 ## Upgrade Notice ##
 
-### 0.4 ###
+### 0.5 ###
 
+* Fix integration with theme updates.
+* EUAPI is now a network-only plugin when used on Multisite.
+* Eat our own dog food. EUAPI now handles its own updates through GitHub.
 * At long-last fix the wonky compatibility with WordPress 3.7+.
 * Increase the minimum required WordPress version to 3.7.
 
 ## Changelog ##
+
+### 0.5 ###
+
+* Fix integration with theme updates.
+* EUAPI is now a network-only plugin when used on Multisite.
+* Eat our own dog food. EUAPI now handles its own updates through GitHub.
+* Add support for an upgrade notice (not used by default).
+* Introduce an abstract `EUAPI_Handler_Files` class to simplify extension by other handlers.
+* Inline docs improvements.
 
 ### 0.4 ###
 
