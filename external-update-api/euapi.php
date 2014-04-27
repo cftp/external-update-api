@@ -29,6 +29,8 @@ class EUAPI {
 		add_filter( 'upgrader_pre_install',                  array( $this, 'filter_upgrader_pre_install' ), 10, 2 );
 		add_filter( 'upgrader_post_install',                 array( $this, 'filter_upgrader_post_install' ), 10, 3 );
 
+		add_filter( 'euapi_plugin_handler',                  array( $this, 'filter_euapi_plugin_handler' ), 10, 2 );
+
 	}
 
 	/**
@@ -584,6 +586,31 @@ class EUAPI {
 
 	}
 
+	/**
+	 * Eat our own dog food. Handle updates to EUAPI through GitHub.
+	 * 
+	 * @param  EUAPI_Handler|null $handler The handler object for this item, or null if a handler isn't set.
+	 * @param  EUAPI_Item         $item    The item in question.
+	 * @return EUAPI_Handler|null The handler for this item, or null.
+	 */
+	public function filter_euapi_plugin_handler( EUAPI_Handler $handler = null, EUAPI_Item $item ) {
+
+		if ( 'https://github.com/cftp/external-update-api' == $item->url ) {
+
+			$handler = new EUAPI_Handler_GitHub( array(
+				'type'       => $item->type,
+				'file'       => $item->file,
+				'github_url' => $item->url,
+				'http'       => array(
+					'sslverify' => false,
+				),
+			) );
+
+		}
+
+		return $handler;
+
+	}
 
 }
 
