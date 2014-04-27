@@ -97,18 +97,19 @@ class EUAPI {
 
 		switch ( $version ) {
 
-			case 1.1:
-				$plugins = json_decode( $args['body']['plugins'] );
+			case 1.0:
+				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Plugin API. Please update to the latest version of WordPress.', 'euapi' ), $version ), 0.4 );
+				return $args;
 				break;
 
+			case 1.1:
 			default:
-				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Plugin API.', 'euapi' ), $version ), 0.4 );
-				return $args;
+				$plugins = json_decode( $args['body']['plugins'] );
 				break;
 
 		}
 
-		if ( empty( $plugins ) or ! is_object( $plugins ) or empty( $plugins->plugins ) ) {
+		if ( ! is_object( $plugins ) or empty( $plugins->plugins ) ) {
 			return $args;
 		}
 
@@ -155,18 +156,19 @@ class EUAPI {
 
 		switch ( $version ) {
 
-			case 1.1:
-				$themes = json_decode( $args['body']['themes'] );
+			case 1.0:
+				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Theme API. Please update to the latest version of WordPress.', 'euapi' ), $version ), 0.4 );
+				return $args;
 				break;
 
+			case 1.1:
 			default:
-				_doing_it_wrong( __METHOD__, sprintf( __( 'External Update API is not compatible with version %s of the WordPress Theme API.', 'euapi' ), $version ), 0.4 );
-				return $args;
+				$themes = json_decode( $args['body']['themes'] );
 				break;
 
 		}
 
-		if ( empty( $themes ) or ! is_object( $themes ) or empty( $themes->themes ) ) {
+		if ( ! is_object( $themes ) or empty( $themes->themes ) ) {
 			return $args;
 		}
 
