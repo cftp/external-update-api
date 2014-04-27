@@ -454,7 +454,7 @@ class EUAPI {
 	 * @author John Blackbourn
 	 * @param  string   $url   URL to fetch.
 	 * @param  array    $args  Array of arguments passed to wp_remote_get().
-	 * @return WP_Error|string WP_Error object on failure, string contents of file on success.
+	 * @return WP_Error|string WP_Error object on failure, string contents of URL body on success.
 	 */
 	public static function fetch( $url, array $args = array() ) {
 
@@ -468,11 +468,11 @@ class EUAPI {
 			return $response;
 		}
 
-		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
-			return new WP_Error( 'fetch_failed', sprintf( __( 'Received HTTP response code %s (%s).', 'euapi' ),
-				esc_html( wp_remote_retrieve_response_code( $response ) ),
-				esc_html( wp_remote_retrieve_response_message( $response ) )
-			) );
+		$code    = wp_remote_retrieve_response_code( $response );
+		$message = wp_remote_retrieve_response_message( $response );
+
+		if ( 200 != $code ) {
+			return new WP_Error( 'fetch_failed', esc_html( $code . ' ' . $message ) );
 		}
 
 		return wp_remote_retrieve_body( $response );
