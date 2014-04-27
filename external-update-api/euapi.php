@@ -123,7 +123,7 @@ class EUAPI {
 			$item    = new EUAPI_Item_Plugin( $plugin, $data );
 			$handler = $this->get_handler( 'plugin', $plugin, $item );
 
-			if ( is_null( $handler ) ) {
+			if ( null === $handler ) {
 				continue;
 			}
 
@@ -188,7 +188,7 @@ class EUAPI {
 			$item    = new EUAPI_Item_Theme( $theme, $data );
 			$handler = $this->get_handler( 'theme', $theme, $item );
 
-			if ( is_null( $handler ) ) {
+			if ( null === $handler ) {
 				continue;
 			}
 
